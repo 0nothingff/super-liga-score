@@ -90,6 +90,92 @@ end
 
 
 
+--troll 
+
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+
+local football = game.Workspace.Junk:FindFirstChild("Football")
+local bringing = false
+
+-- Funkcja wykonywana podczas przycisku F
+local function toggleBring()
+    if not football then
+        warn("not fund")
+        return
+    end
+
+    bringing = not bringing
+
+    if bringing then
+        print("troll on")
+    else
+        print("troll off")
+    end
+end
+
+-- Słuchanie klawisza F
+UserInputService.InputBegan:Connect(function(input, isProcessed)
+    if not isProcessed and input.KeyCode == Enum.KeyCode.F then
+        toggleBring()
+    end
+end)
+
+-- Funkcja przenosząca piłkę na nowe miejsce (z przodu gracza)
+local function repositionFootball()
+    if football and bringing then
+        local player = Players.LocalPlayer
+        local character = player.Character
+
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local humanoidRootPart = character.HumanoidRootPart
+            local forwardDirection = humanoidRootPart.CFrame.LookVector  -- Kierunek, w którym patrzy gracz
+            local upDirection = humanoidRootPart.CFrame.UpVector  -- Kierunek góry
+
+            -- Piłka będzie zawsze z przodu gracza
+            local offset = Vector3.new(0, -2.1, 10)  -- Piłka z przodu
+
+            -- Określamy nową pozycję piłki w zależności od offsetu
+            local targetPosition = humanoidRootPart.Position + forwardDirection * offset.Z + upDirection * offset.Y
+
+            -- Ustawiamy piłkę w odpowiednim miejscu
+            football.CFrame = CFrame.new(targetPosition, humanoidRootPart.Position)
+        end
+    end
+end
+
+-- Funkcja do reagowania na śmierć/gracz zresetowany
+local function onPlayerRespawn()
+    -- Po restarcie gracza przenosimy piłkę z powrotem na przód
+    repositionFootball()
+end
+
+-- Funkcja sprawdzająca, czy piłka została przeniesiona
+local function onFootballMoved()
+    -- Sprawdzamy, czy piłka została przeniesiona
+    if football then
+        repositionFootball()
+    end
+end
+
+-- Słuchanie na zdarzenia gracza
+Players.LocalPlayer.CharacterAdded:Connect(function(character)
+    -- Po załadowaniu nowego gracza (po respawnie) przenosimy piłkę
+    onPlayerRespawn()
+end)
+
+-- Przenoszenie piłki na nowe miejsce przy każdej klatce
+RunService.RenderStepped:Connect(function()
+    if bringing then
+        repositionFootball()
+    end
+end)
+
+-- Ustawienie piłki w odpowiedniej pozycji, kiedy gra się rozpoczyna
+repositionFootball()
+
+
 --tp ball - gol
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
