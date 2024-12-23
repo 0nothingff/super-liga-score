@@ -106,41 +106,41 @@ end
 
 
 
--- Boost speed
+-- Boost Speed
 local player = game.Players.LocalPlayer
 local UIS = game:GetService("UserInputService")
 
 local boostActive = false
 
--- Funkcja wyrzucająca do przodu
+-- Function to boost speed
 local function boostSpeed(character)
     if not boostActive and character then
         boostActive = true
 
-        -- Dodanie siły, aby "wyrzucić" postać do przodu
+        -- Add force to push the character forward
         local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
         if humanoidRootPart then
             local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Ustal maksymalną siłę
-            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Siła wyrzucająca do przodu
+            bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Max force
+            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Boost force
             bodyVelocity.Parent = humanoidRootPart
 
-            -- Po 0.05 sekundy usuń BodyVelocity, aby zatrzymać ruch
+            -- Remove BodyVelocity after 0.05 seconds
             wait(0.05)
             bodyVelocity:Destroy()
         end
 
-        -- Resetowanie aktywacji
-        wait(1)  -- Czas, po którym możliwe będzie ponowne użycie boostu
+        -- Reset boost availability
+        wait(1)
         boostActive = false
     end
 end
 
--- Funkcja konfigurująca boost dla nowej postaci
+-- Set up boost for the character
 local function setupCharacter(character)
     local humanoid = character:WaitForChild("Humanoid")
     
-    -- Nasłuchiwanie na naciśnięcie klawisza 'Shift'
+    -- Listen for the LeftShift key press to activate boost
     UIS.InputBegan:Connect(function(input, gameProcessed)
         if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftShift then
             boostSpeed(character)
@@ -148,16 +148,17 @@ local function setupCharacter(character)
     end)
 end
 
--- Nasłuchiwanie na zmiany postaci
+-- Trigger setup for new characters
 player.CharacterAdded:Connect(setupCharacter)
 
--- Konfiguracja dla obecnej postaci (jeśli istnieje)
+-- Handle current character setup (if it exists)
 if player.Character then
     setupCharacter(player.Character)
 end
 
 
--- gol
+ 
+-- Ball Teleportation gol 
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
@@ -227,13 +228,14 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         teleportAllBalls()
     end
 end)
- -- tp ball 
+
+-- Ball Movement to Player
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
 local player = Players.LocalPlayer
 
--- Function to move parts to the player's position
+-- Function to move parts to player's position
 local function movePartsToPlayer()
     local junkFolder = Workspace:FindFirstChild("Junk")
     if not junkFolder or not junkFolder:IsA("Folder") then
@@ -267,6 +269,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
         movePartsToPlayer()
     end
 end)
+
 
 
 
@@ -352,73 +355,80 @@ end)
 game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 
 
---auto clicker
-local clickInterval = 0 -- Interwał czasowy pomiędzy kliknięciami (w sekundach)
-local toggleKey = Enum.KeyCode.V -- Klawisz do włączania/wyłączania auto-clickera
 
-local autoClicking = false -- Zmienna przechowująca stan auto-clickera
+-- Auto Clicker
+local clickInterval = 0 -- Interval between clicks (in seconds)
+local toggleKey = Enum.KeyCode.V -- Key to toggle auto-clicker
 
--- Funkcja symulująca kliknięcie myszą
+local autoClicking = false -- Auto-clicker state
+
+-- Function to simulate mouse click
 local function autoClick()
     local VirtualInputManager = game:GetService("VirtualInputManager")
 
     while autoClicking do
         wait(clickInterval)
         
-        -- Sprawdź czy gracz jest obecny
+        -- Check if the player is present
         if game.Players.LocalPlayer then
-            -- Symulowanie kliknięcia myszą
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Użycie domyślnych współrzędnych
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Użycie domyślnych współrzędnych
+            -- Simulate mouse click
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
         end
     end
 end
 
--- Funkcja obsługująca wciśnięcie klawisza
+-- Key press function to start/stop auto-clicking
 local function onKeyPress(input, gameProcessedEvent)
     if input.KeyCode == toggleKey and not gameProcessedEvent then
         autoClicking = not autoClicking
         if autoClicking then
-            spawn(autoClick) -- Uruchomienie auto-clickera w nowym wątku
+            spawn(autoClick) -- Run auto-clicker in a new thread
         end
     end
 end
 
--- Podłączenie funkcji do zdarzenia wciśnięcia klawisza
+-- Connect key press event to toggle auto-clicker
 game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 
 
 
---ball track
+
+
+-- Ball Hitbox Size Check
 local function checkAndSetTackleHitboxSize(hitbox)
-    -- Sprawdzamy, czy rozmiar hitboxu nie jest już równy (10, 38, 6)
+    -- Check if the hitbox size is not (100, 100, 100)
     if hitbox.Size ~= Vector3.new(100, 100, 100) then
-        -- Jeśli rozmiar jest inny, ustawiamy go na (10, 38, 6)
+        -- If the size is different, set it to (100, 100, 100)
         hitbox.Size = Vector3.new(100, 100, 100)
     end
 end
--- Funkcja do obsługi postaci gracza
+
+-- Function to handle player character
 local function onCharacterAdded(character)
-    -- Czekamy na obiekt TackleHitbox w postaci gracza
-    local hitbox = character:WaitForChild("TackleHitbox", 5)  -- Timeout 5 sekund dla bezpieczeństwa
+    -- Wait for the TackleHitbox in the player's character
+    local hitbox = character:WaitForChild("TackleHitbox", 5)  -- Timeout 5 seconds for safety
     
     if hitbox then
-        -- Ustawiamy poprawny rozmiar hitboxu
+        -- Set correct hitbox size
         checkAndSetTackleHitboxSize(hitbox)
         
-        -- Obserwujemy zmiany rozmiaru i automatycznie poprawiamy je, jeśli zajdzie potrzeba
+        -- Watch for changes in size and fix it if needed
         hitbox:GetPropertyChangedSignal("Size"):Connect(function()
             checkAndSetTackleHitboxSize(hitbox)
         end)
     end
 end
--- Podpinamy obsługę zdarzenia do LocalPlayer
+
+-- Connect to CharacterAdded event for the LocalPlayer
 local player = game.Players.LocalPlayer
 player.CharacterAdded:Connect(onCharacterAdded)
--- Jeśli postać już istnieje, obsługujemy ją od razu
+
+-- Handle current character if it exists
 if player.Character then
     onCharacterAdded(player.Character)
 end
+
 
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
