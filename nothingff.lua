@@ -157,29 +157,12 @@ if player.Character then
 end
 
 
---tp ball - gol
+-- gol
 local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
 local isTeleporting = false
-
--- Function to update character and humanoid on respawn
-local function onCharacterAdded(newCharacter)
-    character = newCharacter
-    humanoid = character:WaitForChild("Humanoid")
-    
-    -- Print player's team when respawn occurs
-    if player.Team then
-        print("Player's team on respawn: " .. player.Team.Name)
-    else
-        print("Player is not on a team.")
-    end
-end
-player.CharacterAdded:Connect(onCharacterAdded)
 
 -- Function to find all balls in the "Junk" folder
 local function findBalls()
@@ -198,28 +181,31 @@ local function findBalls()
     return balls
 end
 
+-- Function to get the target position based on the player's team
+local function getTeamGoalPosition()
+    if player.Team then
+        if player.Team.Name == "Home" then
+            return Vector3.new(2.010676682, 4.00001144, -186.170898), "Home"
+        elseif player.Team.Name == "Away" then
+            return Vector3.new(-0.214612424, 4.00001144, 186.203613), "Away"
+        end
+    end
+    return nil, "No valid team position"
+end
+
 -- Function to teleport all balls to the team's goal
 local function teleportAllBalls()
     if isTeleporting then return end
     isTeleporting = true
 
-    local targetPosition
-    if player.Team then
-        if player.Team.Name == "Home" then
-            targetPosition = Vector3.new(2.010676682, 4.00001144, -186.170898)
-            print "Home"
-        elseif player.Team.Name == "Away" then
-            targetPosition = Vector3.new(-0.214612424, 4.00001144, 186.203613)
-            print "Away"
-        end
-    end
-
+    local targetPosition, teamName = getTeamGoalPosition()
     if not targetPosition then
-        warn("No valid team position")
+        warn(teamName)
         isTeleporting = false
         return
     end
 
+    print(teamName)
     local balls = findBalls()
     for _, ball in ipairs(balls) do
         if ball:IsA("BasePart") then
@@ -232,7 +218,22 @@ local function teleportAllBalls()
     isTeleporting = false
 end
 
--- Function to teleport specific objects to the player's position
+-- Input handling for teleporting balls
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.G then
+        teleportAllBalls()
+    end
+end)
+ -- tp ball 
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+
+-- Function to move parts to the player's position
 local function movePartsToPlayer()
     local junkFolder = Workspace:FindFirstChild("Junk")
     if not junkFolder or not junkFolder:IsA("Folder") then
@@ -240,6 +241,7 @@ local function movePartsToPlayer()
         return
     end
 
+    local character = player.Character or player.CharacterAdded:Wait()
     local rootPart = character:FindFirstChild("HumanoidRootPart")
     if not rootPart then
         warn("Player's HumanoidRootPart not found")
@@ -256,44 +258,23 @@ local function movePartsToPlayer()
     end
 end
 
--- Input handling
+-- Input handling for moving parts to the player
+local UserInputService = game:GetService("UserInputService")
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
 
-    if input.KeyCode == Enum.KeyCode.G then
-        teleportAllBalls()
-    elseif input.KeyCode == Enum.KeyCode.LeftControl or input.KeyCode == Enum.KeyCode.RightControl then
+    if input.KeyCode == Enum.KeyCode.LeftControl then
         movePartsToPlayer()
     end
 end)
 
--- Handle respawn
-player.CharacterAdded:Connect(function()
-    task.wait(0.1)
-    teleportAllBalls()
-end)
-
--- Handle team changes
-player:GetPropertyChangedSignal("Team"):Connect(teleportAllBalls)
-
--- Handle new objects added to Workspace
-Workspace.ChildAdded:Connect(function(child)
-    if child:IsA("Part") and child.Name == "Football" then
-        task.wait(0.1)
-        teleportAllBalls()
-    end
-end)
 
 
 
 
 
 
-
-
-
-
----one good farming xp 2 players use same
+---one good farming xp 2 players use same x
 local clickInterval = 0 -- Interwał czasowy pomiędzy kliknięciami (w sekundach)
 local toggleKey = Enum.KeyCode.One -- Klawisz do włączania/wyłączania auto-clickera
 
