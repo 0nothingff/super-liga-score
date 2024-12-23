@@ -23,7 +23,7 @@ local function deleteScreen(screen)
 end
 --rest
 local player = game.Players.LocalPlayer
-local waitTime = 0.2 -- Define the wait time as a number
+local waitTime = 0.1 -- Define the wait time as a number
 -- Function to set health to 0
 local function setHealthToZero()
     if player.Character and player.Character:FindFirstChild("Humanoid") then
