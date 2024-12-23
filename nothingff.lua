@@ -21,6 +21,22 @@ local function deleteScreen(screen)
         screen:Destroy()
     end
 end
+--rest
+local player = game.Players.LocalPlayer
+local waitTime = 0.2 -- Define the wait time as a number
+-- Function to set health to 0
+local function setHealthToZero()
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        local humanoid = player.Character.Humanoid
+        humanoid.Health = -999
+    end
+end
+
+-- Repeat the process multiple times with a wait in between
+for i = 1, 10 do
+    setHealthToZero()
+    wait(waitTime)  -- Wait for the specified time (1 second in this case)
+end
 
 -- Usuwanie Transition i KeyHints
 deleteScreen(gameGui:FindFirstChild("Transition"))
@@ -409,8 +425,8 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 
 -- Create window
 local Window = Fluent:CreateWindow({
-    Title = "NOTHING",
-    SubTitle = "super liga score",
+    Title = "nothing",
+    SubTitle = "",
     TabWidth = 150,
     Size = UDim2.fromOffset(550, 450),
     Acrylic = false,
@@ -840,7 +856,11 @@ end
 -- Connect the function to detect key press
 UserInputService.InputBegan:Connect(onKeyPress)
 
-
+Fluent:Notify({
+    Title = "nothing",
+    Content = "The script has been loaded.",
+    Duration = 8
+})
 
 Window:SelectTab(1)
 
