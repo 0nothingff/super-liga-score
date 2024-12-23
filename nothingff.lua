@@ -90,90 +90,44 @@ end
 
 
 
---troll 
+--boost speed  
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local UIS = game:GetService("UserInputService")
 
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
+local boostActive = false
 
-local football = game.Workspace.Junk:FindFirstChild("Football")
-local bringing = false
+-- Funkcja wyrzucająca do przodu
+local function boostSpeed()
+    if not boostActive then
+        boostActive = true
 
--- Funkcja wykonywana podczas przycisku F
-local function toggleBring()
-    if not football then
-        warn("not fund")
-        return
-    end
+        -- Dodanie siły, aby "wyrzucić" postać do przodu
+        local bodyVelocity = Instance.new("BodyVelocity")
+        bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Ustal maksymalną siłę
+        bodyVelocity.Velocity = character.HumanoidRootPart.CFrame.LookVector * 400  -- Siła wyrzucająca do przodu
+        bodyVelocity.Parent = character.HumanoidRootPart
 
-    bringing = not bringing
+        -- Po 0.5 sekundy usuń BodyVelocity, aby zatrzymać ruch
+        wait(0.05)
+        bodyVelocity:Destroy()
 
-    if bringing then
-        print("troll on")
-    else
-        print("troll off")
+        -- Resetowanie aktywacji
+        wait(1)  -- Czas, po którym możliwe będzie ponowne użycie boostu
+        boostActive = false
     end
 end
 
--- Słuchanie klawisza F
-UserInputService.InputBegan:Connect(function(input, isProcessed)
-    if not isProcessed and input.KeyCode == Enum.KeyCode.F then
-        toggleBring()
-    end
-end)
-
--- Funkcja przenosząca piłkę na nowe miejsce (z przodu gracza)
-local function repositionFootball()
-    if football and bringing then
-        local player = Players.LocalPlayer
-        local character = player.Character
-
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            local humanoidRootPart = character.HumanoidRootPart
-            local forwardDirection = humanoidRootPart.CFrame.LookVector  -- Kierunek, w którym patrzy gracz
-            local upDirection = humanoidRootPart.CFrame.UpVector  -- Kierunek góry
-
-            -- Piłka będzie zawsze z przodu gracza
-            local offset = Vector3.new(0, -2.1, 10)  -- Piłka z przodu
-
-            -- Określamy nową pozycję piłki w zależności od offsetu
-            local targetPosition = humanoidRootPart.Position + forwardDirection * offset.Z + upDirection * offset.Y
-
-            -- Ustawiamy piłkę w odpowiednim miejscu
-            football.CFrame = CFrame.new(targetPosition, humanoidRootPart.Position)
+-- Nasłuchiwanie na naciśnięcie klawisza 'Shift'
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed then
+        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftShift then
+            -- Wykonaj boost tylko po wciśnięciu Shift
+            boostSpeed()
         end
     end
-end
-
--- Funkcja do reagowania na śmierć/gracz zresetowany
-local function onPlayerRespawn()
-    -- Po restarcie gracza przenosimy piłkę z powrotem na przód
-    repositionFootball()
-end
-
--- Funkcja sprawdzająca, czy piłka została przeniesiona
-local function onFootballMoved()
-    -- Sprawdzamy, czy piłka została przeniesiona
-    if football then
-        repositionFootball()
-    end
-end
-
--- Słuchanie na zdarzenia gracza
-Players.LocalPlayer.CharacterAdded:Connect(function(character)
-    -- Po załadowaniu nowego gracza (po respawnie) przenosimy piłkę
-    onPlayerRespawn()
 end)
-
--- Przenoszenie piłki na nowe miejsce przy każdej klatce
-RunService.RenderStepped:Connect(function()
-    if bringing then
-        repositionFootball()
-    end
-end)
-
--- Ustawienie piłki w odpowiedniej pozycji, kiedy gra się rozpoczyna
-repositionFootball()
 
 
 --tp ball - gol
