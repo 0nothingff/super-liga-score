@@ -171,6 +171,13 @@ local isTeleporting = false
 local function onCharacterAdded(newCharacter)
     character = newCharacter
     humanoid = character:WaitForChild("Humanoid")
+    
+    -- Print player's team when respawn occurs
+    if player.Team then
+        print("Player's team on respawn: " .. player.Team.Name)
+    else
+        print("Player is not on a team.")
+    end
 end
 player.CharacterAdded:Connect(onCharacterAdded)
 
@@ -200,8 +207,10 @@ local function teleportAllBalls()
     if player.Team then
         if player.Team.Name == "Home" then
             targetPosition = Vector3.new(2.010676682, 4.00001144, -186.170898)
+            print "Home"
         elseif player.Team.Name == "Away" then
             targetPosition = Vector3.new(-0.214612424, 4.00001144, 186.203613)
+            print "Away"
         end
     end
 
@@ -275,8 +284,7 @@ Workspace.ChildAdded:Connect(function(child)
     end
 end)
 
--- Initialize the character
-onCharacterAdded(character)
+
 
 
 
