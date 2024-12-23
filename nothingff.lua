@@ -106,28 +106,29 @@ end
 
 
 
---boost speed  
+-- Boost speed
 local player = game.Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
-local humanoid = character:WaitForChild("Humanoid")
 local UIS = game:GetService("UserInputService")
 
 local boostActive = false
 
 -- Funkcja wyrzucająca do przodu
-local function boostSpeed()
-    if not boostActive then
+local function boostSpeed(character)
+    if not boostActive and character then
         boostActive = true
 
         -- Dodanie siły, aby "wyrzucić" postać do przodu
-        local bodyVelocity = Instance.new("BodyVelocity")
-        bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Ustal maksymalną siłę
-        bodyVelocity.Velocity = character.HumanoidRootPart.CFrame.LookVector * 400  -- Siła wyrzucająca do przodu
-        bodyVelocity.Parent = character.HumanoidRootPart
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Ustal maksymalną siłę
+            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Siła wyrzucająca do przodu
+            bodyVelocity.Parent = humanoidRootPart
 
-        -- Po 0.5 sekundy usuń BodyVelocity, aby zatrzymać ruch
-        wait(0.05)
-        bodyVelocity:Destroy()
+            -- Po 0.05 sekundy usuń BodyVelocity, aby zatrzymać ruch
+            wait(0.05)
+            bodyVelocity:Destroy()
+        end
 
         -- Resetowanie aktywacji
         wait(1)  -- Czas, po którym możliwe będzie ponowne użycie boostu
@@ -135,15 +136,25 @@ local function boostSpeed()
     end
 end
 
--- Nasłuchiwanie na naciśnięcie klawisza 'Shift'
-UIS.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed then
-        if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftShift then
-            -- Wykonaj boost tylko po wciśnięciu Shift
-            boostSpeed()
+-- Funkcja konfigurująca boost dla nowej postaci
+local function setupCharacter(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    
+    -- Nasłuchiwanie na naciśnięcie klawisza 'Shift'
+    UIS.InputBegan:Connect(function(input, gameProcessed)
+        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftShift then
+            boostSpeed(character)
         end
-    end
-end)
+    end)
+end
+
+-- Nasłuchiwanie na zmiany postaci
+player.CharacterAdded:Connect(setupCharacter)
+
+-- Konfiguracja dla obecnej postaci (jeśli istnieje)
+if player.Character then
+    setupCharacter(player.Character)
+end
 
 
 --tp ball - gol
