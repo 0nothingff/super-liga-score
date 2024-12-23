@@ -33,7 +33,7 @@ local function setHealthToZero()
 end
 
 -- Repeat the process multiple times with a wait in between
-for i = 1, 3 do
+for i = 1, 5 do
     setHealthToZero()
     wait(waitTime)  -- Wait for the specified time (1 second in this case)
 end
