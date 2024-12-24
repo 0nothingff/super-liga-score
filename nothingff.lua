@@ -432,6 +432,8 @@ end
 
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 -- Create window
 local Window = Fluent:CreateWindow({
@@ -447,8 +449,10 @@ local Window = Fluent:CreateWindow({
 -- Add tabs
 local Tabs = {
     tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
-    Main = Window:AddTab({ Title = "Football Controls", Icon = "unlock" }),
-  emote = Window:AddTab({ Title = "Emotes", Icon = "unlock" }),
+    Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
+  emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
+        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+
 }
 
 
@@ -871,7 +875,15 @@ Fluent:Notify({
     Content = "The script has been loaded.",
     Duration = 8
 })
-
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("nothing")
+SaveManager:SetFolder("nothing/super-score-liga")
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
+SaveManager:LoadAutoloadConfig()
 
 warn "end"
