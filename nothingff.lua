@@ -1,3 +1,144 @@
+-- Ball Teleportation gol 
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local isTeleporting = false
+
+-- Function to find all balls in the "Junk" folder
+local function findBalls()
+    local junkFolder = Workspace:FindFirstChild("Junk")
+    if not junkFolder then
+        warn("Junk folder not found!")
+        return {}
+    end
+
+    local balls = {}
+    for _, obj in ipairs(junkFolder:GetChildren()) do
+        if obj:IsA("Part") and obj.Name == "Football" then
+            table.insert(balls, obj)
+        end
+    end
+    return balls
+end
+
+-- Function to get the target position based on the player's team
+local function getTeamGoalPosition()
+    if player.Team then
+        if player.Team.Name == "Home" then
+            return Vector3.new(2.010676682, 4.00001144, -186.170898), "Home"
+        elseif player.Team.Name == "Away" then
+            return Vector3.new(-0.214612424, 4.00001144, 186.203613), "Away"
+        end
+    end
+    return nil, "No valid team position"
+end
+
+-- Function to teleport all balls to the team's goal
+local function teleportAllBalls()
+    if isTeleporting then return end
+    isTeleporting = true
+
+    local targetPosition, teamName = getTeamGoalPosition()
+    if not targetPosition then
+        warn(teamName)
+        isTeleporting = false
+        return
+    end
+
+    print(teamName)
+    local balls = findBalls()
+    for _, ball in ipairs(balls) do
+        if ball:IsA("BasePart") then
+            pcall(function()
+                ball.CFrame = CFrame.new(targetPosition)
+            end)
+        end
+    end
+
+    isTeleporting = false
+end
+
+-- Input handling for teleporting balls
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.G then
+        teleportAllBalls()
+    end
+end)
+
+-- Ball Teleportation gol 
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local isTeleporting = false
+
+-- Function to find all balls in the "Junk" folder
+local function findBalls()
+    local junkFolder = Workspace:FindFirstChild("Junk")
+    if not junkFolder then
+        warn("Junk folder not found!")
+        return {}
+    end
+
+    local balls = {}
+    for _, obj in ipairs(junkFolder:GetChildren()) do
+        if obj:IsA("Part") and obj.Name == "Football" then
+            table.insert(balls, obj)
+        end
+    end
+    return balls
+end
+
+-- Function to get the target position based on the player's team
+local function getTeamGoalPosition()
+    if player.Team then
+        if player.Team.Name == "Home" then
+            return Vector3.new(2.010676682, 4.00001144, -186.170898), "Home"
+        elseif player.Team.Name == "Away" then
+            return Vector3.new(-0.214612424, 4.00001144, 186.203613), "Away"
+        end
+    end
+    return nil, "No valid team position"
+end
+
+-- Function to teleport all balls to the team's goal
+local function teleportAllBalls()
+    if isTeleporting then return end
+    isTeleporting = true
+
+    local targetPosition, teamName = getTeamGoalPosition()
+    if not targetPosition then
+        warn(teamName)
+        isTeleporting = false
+        return
+    end
+
+    print(teamName)
+    local balls = findBalls()
+    for _, ball in ipairs(balls) do
+        if ball:IsA("BasePart") then
+            pcall(function()
+                ball.CFrame = CFrame.new(targetPosition)
+            end)
+        end
+    end
+
+    isTeleporting = false
+end
+
+-- Input handling for teleporting balls
+local UserInputService = game:GetService("UserInputService")
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+
+    if input.KeyCode == Enum.KeyCode.G then
+        teleportAllBalls()
+    end
+end)
 
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
@@ -195,76 +336,6 @@ end
 
 
  
--- Ball Teleportation gol 
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-
-local player = Players.LocalPlayer
-local isTeleporting = false
-
--- Function to find all balls in the "Junk" folder
-local function findBalls()
-    local junkFolder = Workspace:FindFirstChild("Junk")
-    if not junkFolder then
-        warn("Junk folder not found!")
-        return {}
-    end
-
-    local balls = {}
-    for _, obj in ipairs(junkFolder:GetChildren()) do
-        if obj:IsA("Part") and obj.Name == "Football" then
-            table.insert(balls, obj)
-        end
-    end
-    return balls
-end
-
--- Function to get the target position based on the player's team
-local function getTeamGoalPosition()
-    if player.Team then
-        if player.Team.Name == "Home" then
-            return Vector3.new(2.010676682, 4.00001144, -186.170898), "Home"
-        elseif player.Team.Name == "Away" then
-            return Vector3.new(-0.214612424, 4.00001144, 186.203613), "Away"
-        end
-    end
-    return nil, "No valid team position"
-end
-
--- Function to teleport all balls to the team's goal
-local function teleportAllBalls()
-    if isTeleporting then return end
-    isTeleporting = true
-
-    local targetPosition, teamName = getTeamGoalPosition()
-    if not targetPosition then
-        warn(teamName)
-        isTeleporting = false
-        return
-    end
-
-    print(teamName)
-    local balls = findBalls()
-    for _, ball in ipairs(balls) do
-        if ball:IsA("BasePart") then
-            pcall(function()
-                ball.CFrame = CFrame.new(targetPosition)
-            end)
-        end
-    end
-
-    isTeleporting = false
-end
-
--- Input handling for teleporting balls
-local UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    if input.KeyCode == Enum.KeyCode.G then
-        teleportAllBalls()
-    end
-end)
 
 -- Ball Movement to Player
 local Players = game:GetService("Players")
