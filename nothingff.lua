@@ -1,4 +1,41 @@
-warn "start"
+
+--gui
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+Fluent:Notify({
+    Title = "nothing",
+    Content = "start load",
+    Duration = 3
+})
+-- Create window
+local Window = Fluent:CreateWindow({
+    Title = "nothing",
+    SubTitle = "Super League Soccer!",
+    TabWidth = 150,
+    Size = UDim2.fromOffset(550, 450),
+    Acrylic = false,
+    Theme = "Light",
+    MinimizeKey = Enum.KeyCode.LeftAlt
+})
+
+-- Add tabs
+local Tabs = {
+    tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
+    Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
+  emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
+        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+
+}
+
+
+
+-- Default hitbox settings
+local defaultSizeX, defaultSizeY, defaultSizeZ = 4.521276473999023, 5.7297587394714355, 2.397878408432007
+local defaultTransparency = 1
+local defaultColor = Color3.fromRGB(255, 255, 255)
+
+
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -430,42 +467,6 @@ if player.Character then
 end
 
 
---gui
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-
--- Create window
-local Window = Fluent:CreateWindow({
-    Title = "nothing",
-    SubTitle = "",
-    TabWidth = 150,
-    Size = UDim2.fromOffset(550, 450),
-    Acrylic = false,
-    Theme = "Light",
-    MinimizeKey = Enum.KeyCode.LeftAlt
-})
-
--- Add tabs
-local Tabs = {
-    tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
-    Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
-  emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
-        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-
-}
-
-
-
--- Default hitbox settings
-local defaultSizeX, defaultSizeY, defaultSizeZ = 4.521276473999023, 5.7297587394714355, 2.397878408432007
-local defaultTransparency = 1
-local defaultColor = Color3.fromRGB(255, 255, 255)
-
-
-
-
-
 -- Current hitbox settings (active)
 local hitboxSizeX, hitboxSizeY, hitboxSizeZ = defaultSizeX, defaultSizeY, defaultSizeZ
 local hitboxTransparency = defaultTransparency
@@ -872,9 +873,10 @@ UserInputService.InputBegan:Connect(onKeyPress)
 
 Fluent:Notify({
     Title = "nothing",
-    Content = "The script has been loaded.",
-    Duration = 8
+    Content = "end load",
+    Duration = 3
 })
+
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
@@ -886,4 +888,91 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
 
-warn "end"
+wait ("2")
+Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})
+Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})Fluent:Notify({
+    Title = "nothing",
+    Content = "script -> Super League Soccer!",
+    Duration = 5
+})
+
