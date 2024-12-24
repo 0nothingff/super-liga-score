@@ -618,8 +618,8 @@ Colorpicker:OnChanged(function()
 end)
 
 -- Initialize variables
-local kickSpeed = 50  -- Default value for kick speed
-local verticalMoveAmount = 50  -- Default vertical move amount for the football
+local kickSpeed = 80  -- Default value for kick speed
+local verticalMoveAmount = 80  -- Default vertical move amount for the football
 local controlEnabled = false  -- Default value for control toggle (off)
 local player = game.Players.LocalPlayer
 local humanoid
