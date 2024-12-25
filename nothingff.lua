@@ -194,6 +194,63 @@ if player.Character then
     setupCharacter(player.Character)
 end
 
+--gol
+local player = game.Players.LocalPlayer
+local football = workspace.Junk:FindFirstChild("Football")
+
+-- Pozycje dla drużyn
+local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
+local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
+
+-- Funkcja do teleportacji piłki
+local function teleportFootball(position)
+    if football and football:IsA("BasePart") then
+        football.CFrame = CFrame.new(position)
+    end
+end
+
+-- Sprawdzanie drużyny i teleportacja piłki
+local function checkAndTeleportFootball()
+    local team = player.Team -- Drużyna gracza
+
+    if team then
+        print("--->", team.Name)
+        if team.Name == "Home" then
+            teleportFootball(homePosition)
+        elseif team.Name == "Away" then
+            teleportFootball(awayPosition)
+        end
+    else
+        print("--->Lobby")
+    end
+end
+
+-- Obsługa klawisza G
+local UIS = game:GetService("UserInputService")
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.G then
+        checkAndTeleportFootball()
+    end
+end)
+
+-- Restartowanie po zmianie futbolówki
+local function updateFootballReference()
+    football = workspace.Junk:FindFirstChild("Football")
+end
+
+if football then
+    football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
+end
+
+-- Trigger dla nowych postaci
+player.CharacterAdded:Connect(function()
+    updateFootballReference()
+end)
+
+
+
+
+
 -- tp ball 
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
