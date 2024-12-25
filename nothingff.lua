@@ -206,8 +206,6 @@ local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
 local function teleportFootball(position)
     if football and football:IsA("BasePart") then
         football.CFrame = CFrame.new(position)
-    else
-        print("ball not found!")
     end
 end
 
@@ -238,23 +236,29 @@ end)
 -- Restartowanie po zmianie futbolówki
 local function updateFootballReference()
     football = workspace.Junk:FindFirstChild("Football")
-    if not football then
-        print("ball not found!")
+    if football and football:IsA("BasePart") then
+        football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
     end
 end
 
-if football then
-    football:GetPropertyChangedSignal("Parent"):Connect(function()
-        updateFootballReference()
-    end)
-else
-    print("")
+-- Nasłuchiwanie na dodanie piłki do workspace
+workspace.Junk.ChildAdded:Connect(function(child)
+    if child.Name == "Football" and child:IsA("BasePart") then
+        football = child
+        football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
+    end
+end)
+
+-- Początkowa konfiguracja piłki
+if football and football:IsA("BasePart") then
+    football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
 end
 
 -- Trigger dla nowych postaci
 player.CharacterAdded:Connect(function()
     updateFootballReference()
 end)
+
 
 
 
