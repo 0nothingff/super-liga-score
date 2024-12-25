@@ -198,9 +198,8 @@ local player = game.Players.LocalPlayer
 local football = workspace.Junk:FindFirstChild("Football")
 
 -- Pozycje dla drużyn
-local homePosition = Vector3.new(2.010676682, 4.00001144, -186.170898)
-local awayPosition = Vector3.new(-0.214612424, 4.00001144, 186.203613)
-
+local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
+local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
 -- Funkcja do teleportacji piłki
 local function teleportFootball(position)
     if football then
@@ -246,7 +245,7 @@ end)
 
  
 
--- Ball Movement to Player
+-- tp ball 
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
