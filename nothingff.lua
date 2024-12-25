@@ -1,4 +1,5 @@
 
+
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
@@ -192,58 +193,6 @@ player.CharacterAdded:Connect(setupCharacter)
 if player.Character then
     setupCharacter(player.Character)
 end
-
---gol
-local player = game.Players.LocalPlayer
-local football = workspace.Junk:FindFirstChild("Football")
-
--- Pozycje dla drużyn
-local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
-local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
--- Funkcja do teleportacji piłki
-local function teleportFootball(position)
-    if football then
-        football.CFrame = CFrame.new(position)
-    end
-end
-
--- Sprawdzanie drużyny i teleportacja piłki
-local function checkAndTeleportFootball()
-    local team = player.Team -- Drużyna gracza
-
-    if team then
-      print("--->", team.Name)
-        if team.Name == "Home" then
-            teleportFootball(homePosition)
-        elseif team.Name == "Away" then
-            teleportFootball(awayPosition)
-        end
-    else
-        print("--->Lobby")
-    end
-end
-
--- Obsługa klawisza G
-local UIS = game:GetService("UserInputService")
-UIS.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    if input.KeyCode == Enum.KeyCode.G then
-        checkAndTeleportFootball()
-    end
-end)
-
--- Restartowanie po zmianie futbolówki
-football:GetPropertyChangedSignal("Parent"):Connect(function()
-    football = workspace.Junk:FindFirstChild("Football")
-end)
-
--- Trigger dla nowych postaci
-player.CharacterAdded:Connect(function(newCharacter)
-    football = workspace.Junk:FindFirstChild("Football")
-end)
-
- 
 
 -- tp ball 
 local Players = game:GetService("Players")
