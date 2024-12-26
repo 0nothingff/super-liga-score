@@ -22,9 +22,10 @@ local Window = Fluent:CreateWindow({
 
 -- Add tabs
 local Tabs = {
-    tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
-    Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
-  emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
+        tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
+        Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
+        emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
+        tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 
 }
@@ -870,6 +871,76 @@ end
 -- Connect the function to detect key press
 UserInputService.InputBegan:Connect(onKeyPress)
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local SelectedPlayer = nil
+local Dropdown = nil
+
+-- Funkcja do aktualizowania listy graczy
+local function UpdatePlayerList()
+    local PlayerList = {}
+    -- Dodajemy graczy, ale nie dodajemy LocalPlayer
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(PlayerList, player.Name)
+        end
+    end
+    -- Jeśli lista jest pusta, dodajemy 'none'
+    if #PlayerList == 0 then
+        table.insert(PlayerList, "none")
+    end
+    table.insert(PlayerList, 1, LocalPlayer.Name)  -- Dodajemy LocalPlayer na początek
+    if Dropdown then
+        Dropdown:SetValues(PlayerList)
+    end
+    return PlayerList
+end
+
+-- Tworzenie dropdown do wyboru gracza
+Dropdown = Tabs.tab1:AddDropdown("Dropdown", {
+    Title = "Select Player",
+    Values = UpdatePlayerList(),
+    Multi = false,
+    Default = "none",
+})
+
+-- Obsługa zmiany wartości w dropdown
+Dropdown:OnChanged(function(Value)
+    if Value and Value ~= "none" then
+        SelectedPlayer = Players:FindFirstChild(Value)
+    else
+        SelectedPlayer = nil
+    end
+end)
+
+-- Funkcja do teleportacji piłki do wybranego gracza
+local function TeleportFootballToPlayer()
+    local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
+    if football then
+        -- Jeśli gracz jest wybrany, teleportuj piłkę do niego
+        if SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
+        elseif not SelectedPlayer then
+            -- Jeśli gracz nie jest wybrany, teleportuj piłkę do lokalnego gracza
+            football.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        end
+    end
+end
+
+-- Dodanie keybind do teleportacji piłki
+Tabs.tab1:AddKeybind("Keybind", {
+    Title = "TP ball to Player",
+    Mode = "Toggle",
+    Default = "Four", -- Możesz zmienić klawisz, jeśli chcesz
+    Callback = function()
+        TeleportFootballToPlayer()  -- Teleportacja tylko po naciśnięciu przycisku
+    end,
+})
+Players.PlayerAdded:Connect(UpdatePlayerList)
+Players.PlayerRemoving:Connect(UpdatePlayerList)
+
+
+
 Fluent:Notify({
     Title = "nothing",
     Content = "end load",
@@ -891,37 +962,5 @@ wait ("2")
 Fluent:Notify({
     Title = "nothing",
     Content = "script -> Super League Soccer!",
-    Duration = 5
+    Duration = 45
 })
-Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
-})Fluent:Notify({
-    Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 5
