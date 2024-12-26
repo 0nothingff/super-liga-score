@@ -316,8 +316,8 @@ end)
 
 ---one good farming xp 2 players use same x
 local clickInterval = 0.1 -- Time interval between clicks (in seconds)
-local toggleKey = Enum.KeyCode.Two -- Key to toggle auto-clicker
-local teleportKey = Enum.KeyCode.Two -- Key to toggle teleporting
+local toggleKey = Enum.KeyCode.One -- Key to toggle auto-clicker
+local teleportKey = Enum.KeyCode.One -- Key to toggle teleporting
 
 local autoClicking = false -- State of the auto-clicker
 local teleporting = false -- State of teleporting
