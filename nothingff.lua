@@ -790,86 +790,97 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
--- Old Emote IDs
-local OldEmoteIds = {
-    ["Floss Dance"] = 5917570207,
-    ["Frosty Flair"] = 10214406616,
+-- Emote IDs
+local EmoteIds = {
+    ["Backflip"] = 13233744006,
+    ["Brazil Spin"] = 14412538937,
+    ["Brazilian Dance"] = 13233759712,
+    ["Champions"] = 17677352529,
+    ["Chilly"] = 98214665935820,
+    ["Chilly Legs"] = 15508356885,
+    ["FCWC Trophy"] = 97408199739643,
+    ["GOL GOL"] = 15263200752,
+    ["Griddy"] = 13233753849,
+    ["Helicopter Helicopter"] = 13774015570,
+    ["Knee Slide"] = 13233767422,
+    ["Laughing"] = 15508223214,
+    ["Meditate"] = 13663293975,
+    ["Pigeon Dance"] = 13663288305,
+    ["Pump It"] = 15508267662,
+    ["Reverse Card"] = 16302284541,
+    ["Scythe Spin"] = 90530660352515,
+    ["Shhh"] = 17454350795,
+    ["Shrug"] = 13663297884,
+    ["Sui"] = 13545327424,
+    ["T-Rex"] = 16499681915,
+    ["Take the L"] = 13233771992,
+    ["The Panther"] = 16499697611,
+    ["Tree Pose"] = 15508113721,
+    ["Wild Dance"] = 16499688823,
 }
 
--- New Emote IDs
-local NewEmoteIds = {
-    ["Monkey"] = 3716636630,
-    ["Elton John Piano Jump"] = 11453096488,
-    ["Cower"] = 4940597758,
-    ["Happy"] = 4849499887,
-    ["Dizzy"] = 3934986896,
-}
+-- Function to play emote based on ID
+local function PlayEmote(emoteId)
+    local player = game.Players.LocalPlayer
+    if player and player.Character then
+        local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            local animation = Instance.new("Animation")
+            animation.AnimationId = "rbxassetid://" .. emoteId
+            local animTrack = humanoid:LoadAnimation(animation)
 
--- Combine old and new emote names for dropdown
-local EmoteNames = {}
-for name, _ in pairs(OldEmoteIds) do
-    table.insert(EmoteNames, name)
-end
-for name, _ in pairs(NewEmoteIds) do
-    table.insert(EmoteNames, name)
+            -- Play the animation
+            animTrack:Play()
+
+            -- Restart the animation when it ends (loop)
+            animTrack.Stopped:Connect(function()
+                -- Play the next emote after the current one stops
+                local selectedEmote = Dropdown and Dropdown.Value  -- Ensure Dropdown and Value are valid
+                if selectedEmote then
+                    local nextEmoteId = EmoteIds[selectedEmote]
+                    if nextEmoteId then
+                        PlayEmote(nextEmoteId)  -- Play the same or next emote
+                    end
+                end
+            end)
+        end
+    end
 end
 
 -- Dropdown for selecting emote
 local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
     Title = "Select Emote",
-    Values = EmoteNames,
+    Values = {"Backflip", "Brazil Spin", "Brazilian Dance", "Champions", "Chilly", "Chilly Legs", "FCWC Trophy", "GOL GOL", "Griddy", "Helicopter Helicopter", "Knee Slide", "Laughing", "Meditate", "Pigeon Dance", "Pump It", "Reverse Card", "Scythe Spin", "Shhh", "Shrug", "Sui", "T-Rex", "Take the L", "The Panther", "Tree Pose", "Wild Dance"},
     Multi = false,
-    Default = 1
-})
-
--- Toggle for enabling the emote loop
-local Toggle = Tabs.emote:AddToggle("EmoteLoopToggle", {
-    Title = "Enable Emote (Three)",
-    Default = false
-})
-
--- Function to play emote based on ID
-local function PlayEmote(emoteId)
-    local player = game.Players.LocalPlayer
-    local humanoid = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-    if humanoid then
-        humanoid:PlayEmoteAndGetAnimTrackById(emoteId)
-    end
-end
-
--- Dropdown change event
-Dropdown:OnChanged(function(Value)
-    if Toggle.Value then  -- Only play emote if toggle is on
-        local emoteId = OldEmoteIds[Value] or NewEmoteIds[Value]  -- Check both old and new emotes
+    Default = "Backflip",
+    Callback = function(value)
+        local emoteId = EmoteIds[value]
         if emoteId then
             PlayEmote(emoteId)
         end
     end
-end)
+})
 
--- Toggle change event (for future extension)
-Toggle:OnChanged(function(Value)
-    -- No print statements, just handle the toggle change here
-end)
-
--- Keybind to play selected emote (e.g., "P" key)
-local UserInputService = game:GetService("UserInputService")
-local keybind = Enum.KeyCode.Three  -- Change to any key you prefer
-
--- Function to handle key press
-local function onKeyPress(input, gameProcessedEvent)
-    if gameProcessedEvent then return end  -- Ignore if game processed the event (e.g., pressing inside a GUI)
-    if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == keybind then
-        local selectedEmote = Dropdown.Value  -- Get selected emote name
-        local emoteId = OldEmoteIds[selectedEmote] or NewEmoteIds[selectedEmote]
-        if emoteId then
-            PlayEmote(emoteId)
+-- Keybind for enabling the emote loop
+local Keybind = Tabs.emote:AddKeybind("Keybind", {
+    Title = "Activate Emotes",
+    Mode = "Toggle",
+    Default = "Four", -- Use a string for the key name
+    Callback = function(pressed)
+        if pressed then
+            local selectedEmote = Dropdown and Dropdown.Value  -- Ensure Dropdown and Value are valid
+            if selectedEmote then
+                local emoteId = EmoteIds[selectedEmote]
+                if emoteId then
+                    PlayEmote(emoteId)
+                end
+            end
         end
-    end
-end
+    end,
+})
 
--- Connect the function to detect key press
-UserInputService.InputBegan:Connect(onKeyPress)
+
+
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -921,7 +932,7 @@ local function TeleportFootballToPlayer()
         if SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
             football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
         elseif not SelectedPlayer then
-            -- Jeśli gracz nie jest wybrany, teleportuj piłkę do lokalnego gracza
+            -- Jeśli gracz nie jest wybrany (SelectedPlayer jest nil), teleportuj piłkę do lokalnego gracza
             football.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
         end
     end
@@ -931,13 +942,17 @@ end
 Tabs.tab1:AddKeybind("Keybind", {
     Title = "TP ball to Player",
     Mode = "Toggle",
-    Default = "Four", -- Możesz zmienić klawisz, jeśli chcesz
+    Default = "Three", -- Możesz zmienić klawisz, jeśli chcesz
     Callback = function()
-        TeleportFootballToPlayer()  -- Teleportacja tylko po naciśnięciu przycisku
+        if SelectedPlayer ~= nil and SelectedPlayer.Name ~= "none" then
+            TeleportFootballToPlayer()  -- Teleportacja tylko po naciśnięciu przycisku, jeśli gracz jest wybrany
+        end
     end,
 })
+
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
+
 
 
 
