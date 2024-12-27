@@ -1,5 +1,3 @@
-
-
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
@@ -27,9 +25,7 @@ local Tabs = {
         emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
         tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-
 }
-
 
 
 -- Default hitbox settings
@@ -124,6 +120,7 @@ if party then
 else
     print("-")
 end
+
 
 
 
@@ -803,7 +800,7 @@ local EmoteIds = {
     ["Wild Dance"] = 16499688823,
 }
 
-local currentAnimTrack = nil  -- Track the current animation playing
+local currentAnimTrack = nil -- Track the current animation playing
 
 -- Function to play or stop emote based on ID
 local function ToggleEmote(emoteId)
@@ -820,13 +817,11 @@ local function ToggleEmote(emoteId)
                 local animation = Instance.new("Animation")
                 animation.AnimationId = "rbxassetid://" .. emoteId
                 currentAnimTrack = humanoid:LoadAnimation(animation)
-
-                -- Play the animation
                 currentAnimTrack:Play()
-                
+
                 -- Optionally, handle emote stopping and re-triggering
                 currentAnimTrack.Stopped:Connect(function()
-                    currentAnimTrack = nil  -- Reset the animation when it stops
+                    currentAnimTrack = nil -- Reset the animation when it stops
                 end)
             end
         end
@@ -836,7 +831,12 @@ end
 -- Dropdown for selecting emote
 local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
     Title = "Select Emote",
-    Values = {"Backflip", "Brazil Spin", "Brazilian Dance", "Champions", "Chilly", "Chilly Legs", "FCWC Trophy", "GOL GOL", "Griddy", "Helicopter Helicopter", "Knee Slide", "Laughing", "Meditate", "Pigeon Dance", "Pump It", "Reverse Card", "Scythe Spin", "Shhh", "Shrug", "Sui", "T-Rex", "Take the L", "The Panther", "Tree Pose", "Wild Dance"},
+    Values = {
+        "Backflip", "Brazil Spin", "Brazilian Dance", "Champions", "Chilly", "Chilly Legs",
+        "FCWC Trophy", "GOL GOL", "Griddy", "Helicopter Helicopter", "Knee Slide", "Laughing",
+        "Meditate", "Pigeon Dance", "Pump It", "Reverse Card", "Scythe Spin", "Shhh", "Shrug",
+        "Sui", "T-Rex", "Take the L", "The Panther", "Tree Pose", "Wild Dance"
+    },
     Multi = false,
     Default = "Backflip",
     Callback = function(value)
@@ -846,95 +846,82 @@ local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
 
 -- Keybind for activating the emote (toggle play/stop)
 local Keybind = Tabs.emote:AddKeybind("Keybind", {
-    Title = "Emote play/stop 2x times,
+    Title = "Emote play/stop",
     Mode = "Toggle",
-    Default = "Four",  -- Change this to any desired key
+    Default = "Four", -- Change this to any desired key
     Callback = function(pressed)
         if pressed then
             local selectedEmote = Dropdown and Dropdown.Value
             if selectedEmote then
                 local emoteId = EmoteIds[selectedEmote]
                 if emoteId then
-                    ToggleEmote(emoteId)  -- Toggle the selected emote (play/stop)
+                    ToggleEmote(emoteId) -- Toggle the selected emote (play/stop)
                 end
             end
         end
     end,
 })
 
-
-
-
-
-
+-- Player-related functionalities
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local SelectedPlayer = nil
-local Dropdown = nil
+local PlayerDropdown = nil
 
--- Funkcja do aktualizowania listy graczy
+-- Function to update player list
 local function UpdatePlayerList()
     local PlayerList = {}
-    -- Dodajemy graczy, ale nie dodajemy LocalPlayer
+    -- Add all players except the LocalPlayer to the list
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             table.insert(PlayerList, player.Name)
         end
     end
-    -- Jeśli lista jest pusta, dodajemy 'none'
-    if #PlayerList == 0 then
-        table.insert(PlayerList, "none")
-    end
-    table.insert(PlayerList, 1, LocalPlayer.Name)  -- Dodajemy LocalPlayer na początek
-    if Dropdown then
-        Dropdown:SetValues(PlayerList)
-    end
+    -- Add LocalPlayer at the top of the list
+    table.insert(PlayerList, 1, LocalPlayer.Name)
+    -- Add "none" option at the bottom of the list
+    table.insert(PlayerList, "none")
     return PlayerList
 end
 
--- Tworzenie dropdown do wyboru gracza
-Dropdown = Tabs.tab1:AddDropdown("Dropdown", {
+-- Create dropdown for selecting player
+PlayerDropdown = Tabs.tab1:AddDropdown("Dropdown", {
     Title = "Select Player",
-    Values = UpdatePlayerList(),
+    Values = UpdatePlayerList(),  -- Corrected here to call UpdatePlayerList() before passing it
     Multi = false,
     Default = "none",
+    Callback = function(value)
+        if value and value ~= "none" then
+            SelectedPlayer = Players:FindFirstChild(value)
+        else
+            SelectedPlayer = nil
+        end
+    end
 })
 
--- Obsługa zmiany wartości w dropdown
-Dropdown:OnChanged(function(Value)
-    if Value and Value ~= "none" then
-        SelectedPlayer = Players:FindFirstChild(Value)
-    else
-        SelectedPlayer = nil
-    end
-end)
-
--- Funkcja do teleportacji piłki do wybranego gracza
+-- Function to teleport football to the selected player
 local function TeleportFootballToPlayer()
     local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
     if football then
-        -- Jeśli gracz jest wybrany, teleportuj piłkę do niego
         if SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
             football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
         elseif not SelectedPlayer then
-            -- Jeśli gracz nie jest wybrany (SelectedPlayer jest nil), teleportuj piłkę do lokalnego gracza
             football.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
         end
     end
 end
 
--- Dodanie keybind do teleportacji piłki
+-- Add keybind to teleport football
 Tabs.tab1:AddKeybind("Keybind", {
     Title = "TP ball to Player",
     Mode = "Toggle",
-    Default = "Three", -- Możesz zmienić klawisz, jeśli chcesz
+    Default = "Three", -- Change this key if needed
     Callback = function()
-        if SelectedPlayer ~= nil and SelectedPlayer.Name ~= "none" then
-            TeleportFootballToPlayer()  -- Teleportacja tylko po naciśnięciu przycisku, jeśli gracz jest wybrany
-        end
+        TeleportFootballToPlayer()
     end,
 })
 
+-- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
 
@@ -958,9 +945,15 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
 
-wait ("2")
+wait ("5")
 Fluent:Notify({
     Title = "nothing",
-    Content = "script -> Super League Soccer!",
-    Duration = 45
+    Content = "👍",
+    Duration = 50
+})
+wait ("50.5")
+Fluent:Notify({
+    Title = "nothing",
+    Content = "🫠",
+    Duration = 2.5
 })
