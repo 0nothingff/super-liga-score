@@ -1,39 +1,3 @@
---gui
-local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
-local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
-local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-Fluent:Notify({
-    Title = "nothing",
-    Content = "start load",
-    Duration = 3
-})
--- Create window
-local Window = Fluent:CreateWindow({
-    Title = "Super League Soccer!",
-    SubTitle = "nothing",
-    TabWidth = 150,
-    Size = UDim2.fromOffset(550, 450),
-    Acrylic = false,
-    Theme = "Light",
-    MinimizeKey = Enum.KeyCode.LeftAlt
-})
-
--- Add tabs
-local Tabs = {
-        tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
-        Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
-        emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
-        tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
-        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
-}
-
-
--- Default hitbox settings
-local defaultSizeX, defaultSizeY, defaultSizeZ = 4.521276473999023, 5.7297587394714355, 2.397878408432007
-local defaultTransparency = 1
-local defaultColor = Color3.fromRGB(255, 255, 255)
-
-
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -120,6 +84,45 @@ if party then
 else
     print("-")
 end
+
+
+--gui
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+Fluent:Notify({
+    Title = "nothing",
+    Content = "start load",
+    Duration = 3
+})
+-- Create window
+local Window = Fluent:CreateWindow({
+    Title = "Super League Soccer!",
+    SubTitle = "nothing",
+    TabWidth = 150,
+    Size = UDim2.fromOffset(550, 450),
+    Acrylic = false,
+    Theme = "Light",
+    MinimizeKey = Enum.KeyCode.LeftAlt
+})
+
+-- Add tabs
+local Tabs = {
+        tab2 = Window:AddTab({ Title = "Custom Hitbox", Icon = "play" }),
+        Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
+        emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
+        tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
+        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+}
+
+
+-- Default hitbox settings
+local defaultSizeX, defaultSizeY, defaultSizeZ = 4.521276473999023, 5.7297587394714355, 2.397878408432007
+local defaultTransparency = 1
+local defaultColor = Color3.fromRGB(255, 255, 255)
+
+
+
 
 
 
@@ -892,8 +895,10 @@ PlayerDropdown = Tabs.tab1:AddDropdown("Dropdown", {
     Default = "none",
     Callback = function(value)
         if value and value ~= "none" then
+            -- Set SelectedPlayer to the player if one is selected
             SelectedPlayer = Players:FindFirstChild(value)
         else
+            -- Set SelectedPlayer to nil when "none" is selected (do nothing)
             SelectedPlayer = nil
         end
     end
@@ -904,9 +909,13 @@ local function TeleportFootballToPlayer()
     local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
     if football then
         if SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            -- If a player is selected, teleport football to their position
             football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
-        elseif not SelectedPlayer then
-            football.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
+        elseif SelectedPlayer == nil then
+            -- If "none" is selected, do nothing (football stays where it is)
+            -- Alternatively, you could set the football to a default position (like LocalPlayer's position)
+            -- but in this case we do nothing if "none" is selected
+            return
         end
     end
 end
@@ -924,6 +933,7 @@ Tabs.tab1:AddKeybind("Keybind", {
 -- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
+
 
 
 
@@ -955,5 +965,5 @@ wait ("15.2")
 Fluent:Notify({
     Title = "nothing",
     Content = "👍👍",
-    Duration = 2.5
+    Duration = 3.5
 })
