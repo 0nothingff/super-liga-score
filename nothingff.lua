@@ -60,22 +60,7 @@ local function deleteScreen(screen)
         screen:Destroy()
     end
 end
---rest
-local player = game.Players.LocalPlayer
-local waitTime = 0.1 -- Define the wait time as a number
--- Function to set health to 0
-local function setHealthToZero()
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        local humanoid = player.Character.Humanoid
-        humanoid.Health = -999
-    end
-end
 
--- Repeat the process multiple times with a wait in between
-for i = 1, 5 do
-    setHealthToZero()
-    wait(waitTime)  -- Wait for the specified time (1 second in this case)
-end
 
 -- Usuwanie Transition i KeyHints
 deleteScreen(gameGui:FindFirstChild("Transition"))
