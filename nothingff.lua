@@ -9,8 +9,8 @@ Fluent:Notify({
 })
 -- Create window
 local Window = Fluent:CreateWindow({
-    Title = "nothing",
-    SubTitle = "Super League Soccer!",
+    Title = "Super League Soccer!",
+    SubTitle = "nothing",
     TabWidth = 150,
     Size = UDim2.fromOffset(550, 450),
     Acrylic = false,
@@ -948,12 +948,12 @@ SaveManager:LoadAutoloadConfig()
 wait ("5")
 Fluent:Notify({
     Title = "nothing",
-    Content = "👍",
-    Duration = 50
+    Content = "Enjoy the scripts",
+    Duration = 15
 })
-wait ("50.5")
+wait ("15.2")
 Fluent:Notify({
     Title = "nothing",
-    Content = "🫠",
+    Content = "👍👍",
     Duration = 2.5
 })
