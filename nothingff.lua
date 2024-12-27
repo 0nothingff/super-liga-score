@@ -790,7 +790,6 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
--- Emote IDs
 local EmoteIds = {
     ["Backflip"] = 13233744006,
     ["Brazil Spin"] = 14412538937,
@@ -819,30 +818,32 @@ local EmoteIds = {
     ["Wild Dance"] = 16499688823,
 }
 
--- Function to play emote based on ID
-local function PlayEmote(emoteId)
+local currentAnimTrack = nil  -- Track the current animation playing
+
+-- Function to play or stop emote based on ID
+local function ToggleEmote(emoteId)
     local player = game.Players.LocalPlayer
     if player and player.Character then
         local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            local animation = Instance.new("Animation")
-            animation.AnimationId = "rbxassetid://" .. emoteId
-            local animTrack = humanoid:LoadAnimation(animation)
+            -- If there's an animation currently playing, stop it
+            if currentAnimTrack and currentAnimTrack.IsPlaying then
+                currentAnimTrack:Stop()
+                currentAnimTrack = nil
+            else
+                -- Otherwise, play the new emote
+                local animation = Instance.new("Animation")
+                animation.AnimationId = "rbxassetid://" .. emoteId
+                currentAnimTrack = humanoid:LoadAnimation(animation)
 
-            -- Play the animation
-            animTrack:Play()
-
-            -- Restart the animation when it ends (loop)
-            animTrack.Stopped:Connect(function()
-                -- Play the next emote after the current one stops
-                local selectedEmote = Dropdown and Dropdown.Value  -- Ensure Dropdown and Value are valid
-                if selectedEmote then
-                    local nextEmoteId = EmoteIds[selectedEmote]
-                    if nextEmoteId then
-                        PlayEmote(nextEmoteId)  -- Play the same or next emote
-                    end
-                end
-            end)
+                -- Play the animation
+                currentAnimTrack:Play()
+                
+                -- Optionally, handle emote stopping and re-triggering
+                currentAnimTrack.Stopped:Connect(function()
+                    currentAnimTrack = nil  -- Reset the animation when it stops
+                end)
+            end
         end
     end
 end
@@ -854,30 +855,29 @@ local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
     Multi = false,
     Default = "Backflip",
     Callback = function(value)
-        local emoteId = EmoteIds[value]
-        if emoteId then
-            PlayEmote(emoteId)
-        end
+        -- Emote does not play automatically now; it's only triggered by keybind
     end
 })
 
--- Keybind for enabling the emote loop
+-- Keybind for activating the emote (toggle play/stop)
 local Keybind = Tabs.emote:AddKeybind("Keybind", {
     Title = "Activate Emotes",
     Mode = "Toggle",
-    Default = "Four", -- Use a string for the key name
+    Default = "Four",  -- Change this to any desired key
     Callback = function(pressed)
         if pressed then
-            local selectedEmote = Dropdown and Dropdown.Value  -- Ensure Dropdown and Value are valid
+            local selectedEmote = Dropdown and Dropdown.Value
             if selectedEmote then
                 local emoteId = EmoteIds[selectedEmote]
                 if emoteId then
-                    PlayEmote(emoteId)
+                    ToggleEmote(emoteId)  -- Toggle the selected emote (play/stop)
                 end
             end
         end
     end,
 })
+
+
 
 
 
