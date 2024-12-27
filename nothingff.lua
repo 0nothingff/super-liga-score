@@ -861,7 +861,7 @@ local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
 
 -- Keybind for activating the emote (toggle play/stop)
 local Keybind = Tabs.emote:AddKeybind("Keybind", {
-    Title = "Activate Emotes",
+    Title = "Emotes play/stop 2 times to stop",
     Mode = "Toggle",
     Default = "Four",  -- Change this to any desired key
     Callback = function(pressed)
