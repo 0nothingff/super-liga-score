@@ -10,7 +10,7 @@ end
 -- Referencje do GameGui
 local gameGui = playerGui:FindFirstChild("GameGui")
 if not gameGui then
-    print("-error-")
+    warn("join game Super League Soccer!")
     return
 end
 
