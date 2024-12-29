@@ -236,13 +236,13 @@ end)
 
 
 
----one good farming xp 2 players use same xp
+---one good farming xp 2 players use same xp and V auto clicker
 local player = game.Players.LocalPlayer
 local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to track
 
 -- Separate keybinds for teleporting and auto-clicking
 local keybind_tp_ball = Enum.KeyCode.One -- Key for teleport and following ball
-local keybind_auto_clicker = Enum.KeyCode.One -- Key for auto-clicking
+local keybind_auto_clicker = Enum.KeyCode.V -- Key for auto-clicking
 
 local isFollowing = false
 local footballs = {} -- List of footballs to track
@@ -300,7 +300,7 @@ local function autoClick()
     end
 end
 
--- Key press function to toggle teleporting and auto-clicker
+-- Key press function to toggle teleporting and auto-clicking
 local function onKeyPress(input, gameProcessedEvent)
     if input.UserInputType == Enum.UserInputType.Keyboard then
         if input.KeyCode == keybind_tp_ball and not gameProcessedEvent then
@@ -315,14 +315,9 @@ local function onKeyPress(input, gameProcessedEvent)
             if not autoClicking then
                 autoClicking = true
                 -- Start auto-clicking in a new thread
-                autoClickThread = coroutine.create(autoClick)
-                coroutine.resume(autoClickThread)
+                spawn(autoClick)
             else
                 autoClicking = false
-                if autoClickThread then
-                    -- Stop the auto-clicking thread safely
-                    pcall(function() autoClickThread:Cancel() end)
-                end
             end
         end
     end
@@ -359,44 +354,6 @@ game:GetService("Players").PlayerRemoving:Connect(function(removedPlayer)
     end
 end)
 
-
-
-
-
--- Auto Clicker
-local clickInterval = 0 -- Interval between clicks (in seconds)
-local toggleKey = Enum.KeyCode.V -- Key to toggle auto-clicker
-
-local autoClicking = false -- Auto-clicker state
-
--- Function to simulate mouse click
-local function autoClick()
-    local VirtualInputManager = game:GetService("VirtualInputManager")
-
-    while autoClicking do
-        wait(clickInterval)
-        
-        -- Check if the player is present
-        if game.Players.LocalPlayer then
-            -- Simulate mouse click
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
-        end
-    end
-end
-
--- Key press function to start/stop auto-clicking
-local function onKeyPress(input, gameProcessedEvent)
-    if input.KeyCode == toggleKey and not gameProcessedEvent then
-        autoClicking = not autoClicking
-        if autoClicking then
-            spawn(autoClick) -- Run auto-clicker in a new thread
-        end
-    end
-end
-
--- Connect key press event to toggle auto-clicker
-game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 
 
 
