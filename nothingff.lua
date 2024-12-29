@@ -357,9 +357,9 @@ game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 -- Ball Hitbox Size Check
 local function checkAndSetTackleHitboxSize(hitbox)
     -- Check if the hitbox size is not (100, 100, 100)
-    if hitbox.Size ~= Vector3.new(100, 100, 100) then
+    if hitbox.Size ~= Vector3.new(20, 20, 20) then
         -- If the size is different, set it to (100, 100, 100)
-        hitbox.Size = Vector3.new(100, 100, 100)
+        hitbox.Size = Vector3.new(20, 20, 20)
     end
 end
 
