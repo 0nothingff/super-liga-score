@@ -239,7 +239,10 @@ end)
 ---one good farming xp 2 players use same xp
 local player = game.Players.LocalPlayer
 local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to track
-local keyBind = Enum.KeyCode.One -- Key to toggle teleport and auto-clicker
+
+-- Separate keybinds for teleporting and auto-clicking
+local keybind_tp_ball = Enum.KeyCode.One -- Key for teleport and following ball
+local keybind_auto_clicker = Enum.KeyCode.One -- Key for auto-clicking
 
 local isFollowing = false
 local footballs = {} -- List of footballs to track
@@ -299,26 +302,28 @@ end
 
 -- Key press function to toggle teleporting and auto-clicker
 local function onKeyPress(input, gameProcessedEvent)
-    if input.KeyCode == keyBind and not gameProcessedEvent then
-        -- Toggle teleporting and following
-        if isFollowing then
-            stopFollowing()  -- Stop following
-        else
-            teleportAndFollow()  -- Start teleport and follow
-        end
-
-        -- Toggle auto-clicking
-        if autoClicking then
-            autoClicking = false
-            if autoClickThread then
-                -- Stop the auto-clicking thread safely
-                pcall(function() autoClickThread:Cancel() end)
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode == keybind_tp_ball and not gameProcessedEvent then
+            -- Toggle teleporting and following
+            if isFollowing then
+                stopFollowing()  -- Stop following
+            else
+                teleportAndFollow()  -- Start teleport and follow
             end
-        else
-            autoClicking = true
-            -- Start auto-clicking in a new thread
-            autoClickThread = coroutine.create(autoClick)
-            coroutine.resume(autoClickThread)
+        elseif input.KeyCode == keybind_auto_clicker and not gameProcessedEvent then
+            -- Toggle auto-clicking
+            if not autoClicking then
+                autoClicking = true
+                -- Start auto-clicking in a new thread
+                autoClickThread = coroutine.create(autoClick)
+                coroutine.resume(autoClickThread)
+            else
+                autoClicking = false
+                if autoClickThread then
+                    -- Stop the auto-clicking thread safely
+                    pcall(function() autoClickThread:Cancel() end)
+                end
+            end
         end
     end
 end
@@ -353,6 +358,7 @@ game:GetService("Players").PlayerRemoving:Connect(function(removedPlayer)
         stopFollowing()
     end
 end)
+
 
 
 
