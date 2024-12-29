@@ -184,6 +184,101 @@ end
 
 
 
+--gol
+local player = game.Players.LocalPlayer
+local football = workspace.Junk:FindFirstChild("Football")
+
+-- Pozycje dla drużyn
+local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
+local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
+
+-- Funkcja do teleportacji piłki
+local function teleportFootball(position)
+    local success, err = pcall(function()
+        if football and football:IsA("BasePart") then
+            football.CFrame = CFrame.new(position)
+        end
+    end)
+    if not success then
+        warn("Error teleporting football: ", err)
+    end
+end
+
+-- Sprawdzanie drużyny i teleportacja piłki
+local function checkAndTeleportFootball()
+    local success, err = pcall(function()
+        local team = player.Team -- Drużyna gracza
+
+        if team then
+            print("--->", team.Name)
+            if team.Name == "Home" then
+                teleportFootball(homePosition)
+            elseif team.Name == "Away" then
+                teleportFootball(awayPosition)
+            end
+        else
+            print("--->Lobby")
+        end
+    end)
+    if not success then
+        warn("Error checking and teleporting football: ", err)
+    end
+end
+
+-- Obsługa klawisza G
+local UIS = game:GetService("UserInputService")
+UIS.InputBegan:Connect(function(input, gameProcessed)
+    if not gameProcessed and input.KeyCode == Enum.KeyCode.G then
+        checkAndTeleportFootball()
+    end
+end)
+
+-- Restartowanie po zmianie futbolówki
+local function updateFootballReference()
+    local success, err = pcall(function()
+        football = workspace.Junk:FindFirstChild("Football")
+        if football and football:IsA("BasePart") then
+            football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
+        end
+    end)
+    if not success then
+        warn("Error updating football reference: ", err)
+    end
+end
+
+-- Nasłuchiwanie na dodanie piłki do workspace
+workspace.Junk.ChildAdded:Connect(function(child)
+    local success, err = pcall(function()
+        if child.Name == "Football" and child:IsA("BasePart") then
+            football = child
+            football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
+        end
+    end)
+    if not success then
+        warn("Error handling ChildAdded: ", err)
+    end
+end)
+
+-- Początkowa konfiguracja piłki
+local success, err = pcall(function()
+    if football and football:IsA("BasePart") then
+        football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
+    end
+end)
+if not success then
+    warn("Error during initial football configuration: ", err)
+end
+
+-- Trigger dla nowych postaci
+player.CharacterAdded:Connect(function()
+    local success, err = pcall(function()
+        updateFootballReference()
+    end)
+    if not success then
+        warn("Error handling CharacterAdded: ", err)
+    end
+end)
+
 
 
 
