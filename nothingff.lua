@@ -237,7 +237,7 @@ end)
 
 
 ---one good farming xp 2 players use same x
-local clickInterval = 0.1 -- Time interval between clicks (in seconds)
+local clickInterval = 0 -- Time interval between clicks (in seconds, set to 0 for immediate clicks)
 local toggleKey = Enum.KeyCode.One -- Key to toggle auto-clicker
 local teleportKey = Enum.KeyCode.One -- Key to toggle teleporting
 
@@ -249,7 +249,7 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
 
--- Debounce to prevent key spamming
+-- Debounce to prevent key spamming (Optional)
 local debounce = false
 
 -- Function to simulate a mouse click
@@ -257,11 +257,12 @@ local function autoClick()
     local VirtualInputManager = game:GetService("VirtualInputManager")
 
     while autoClicking do
-        if game.Players.LocalPlayer then
+        -- Only simulate click if player exists
+        if Player then
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
         end
-        task.wait(clickInterval)
+        task.wait(clickInterval)  -- Since it's 0, this will execute immediately
     end
 end
 
@@ -290,11 +291,12 @@ local function onKeyPress(input, gameProcessedEvent)
     if gameProcessedEvent or debounce then return end
 
     debounce = true
-    task.delay(0.2, function() debounce = false end) -- Debounce delay
+    task.delay(0.2, function() debounce = false end) -- Optional debounce delay
 
     if input.KeyCode == toggleKey then
         autoClicking = not autoClicking
         if autoClicking then
+            -- Start auto-clicking instantly without delay
             spawn(autoClick)
         end
     elseif input.KeyCode == teleportKey then
@@ -311,6 +313,7 @@ end)
 
 -- Connect the key press event to toggle functions
 UserInputService.InputBegan:Connect(onKeyPress)
+
 
 
 
