@@ -236,85 +236,128 @@ end)
 
 
 
----one good farming xp 2 players use same x
-local clickInterval = 0 -- Time interval between clicks (in seconds, set to 0 for immediate clicks)
+---one good farming xp 2 players use same xp
+
+local player = game.Players.LocalPlayer
+local junkFolder = workspace:WaitForChild("Junk") -- Folder z obiektami do śledzenia
+local keyBind = Enum.KeyCode.One -- Klawisz do aktywacji teleportacji i śledzenia
+
+local isFollowing = false
+local footballs = {} -- Lista obiektów Football, które będą śledzone
+
+-- Funkcja do teleportacji wszystkich Football, kick1, kick2, kick3
+local function teleportAndFollow()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:WaitForChild("HumanoidRootPart")
+
+    -- Teleportowanie wszystkich Football, kick1, kick2, kick3 w folderze Junk
+    for _, obj in ipairs(junkFolder:GetChildren()) do
+        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
+            -- Dodajemy obiekt do listy, jeśli jeszcze nie jest
+            if not table.find(footballs, obj) then
+                table.insert(footballs, obj)
+            end
+            -- Teleportacja obiektu do gracza na środek
+            obj.CFrame = CFrame.new(rootPart.Position)
+        end
+    end
+
+    -- Pętla śledząca gracza
+    isFollowing = true
+    while isFollowing do
+        -- Sprawdzamy, czy Footballs istnieją
+        for _, football in ipairs(footballs) do
+            if football then
+                -- Ustawiamy Football na środek gracza
+                football.CFrame = CFrame.new(rootPart.Position)
+            end
+        end
+        wait(0) -- Minimalny czas oczekiwania, by było to wykonywane jak najczęściej
+    end
+end
+
+-- Funkcja zatrzymująca śledzenie
+local function stopFollowing()
+    isFollowing = false
+end
+
+-- Aktywacja teleportacji + śledzenie przez naciśnięcie klawisza
+local UIS = game:GetService("UserInputService")
+UIS.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Keyboard then
+        if input.KeyCode == keyBind then
+            if isFollowing then
+                stopFollowing()  -- Zatrzymuje śledzenie
+            else
+                teleportAndFollow()  -- Włącza teleportację i śledzenie
+            end
+        end
+    end
+end)
+
+-- Obsługuje dodanie piłek do folderu Junk
+junkFolder.ChildAdded:Connect(function(child)
+    if child:IsA("BasePart") and (child.Name == "kick1" or child.Name == "kick2" or child.Name == "kick3" or child.Name == "Football") then
+        -- Dodajemy obiekt do listy, ale nie teleportujemy go od razu
+        if not table.find(footballs, child) then
+            table.insert(footballs, child)
+        end
+    end
+end)
+
+-- Obsługuje usunięcie piłek z folderu Junk
+junkFolder.ChildRemoved:Connect(function(child)
+    if child:IsA("BasePart") and (child.Name == "kick1" or child.Name == "kick2" or child.Name == "kick3" or child.Name == "Football") then
+        -- Usuwamy obiekt z listy
+        for i, football in ipairs(footballs) do
+            if football == child then
+                table.remove(footballs, i)
+                break
+            end
+        end
+    end
+end)
+
+-- Zatrzymanie śledzenia, jeśli gracz opuści grę (opcjonalnie)
+game:GetService("Players").PlayerRemoving:Connect(function(removedPlayer)
+    if removedPlayer == player then
+        stopFollowing()
+    end
+end)
+--auto for One
+local clickInterval = 0 -- Interval between clicks (in seconds)
 local toggleKey = Enum.KeyCode.One -- Key to toggle auto-clicker
-local teleportKey = Enum.KeyCode.One -- Key to toggle teleporting
 
-local autoClicking = false -- State of the auto-clicker
-local teleporting = false -- State of teleporting
+local autoClicking = false -- Auto-clicker state
 
-local Player = game.Players.LocalPlayer
-local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
-local RunService = game:GetService("RunService")
-
--- Debounce to prevent key spamming (Optional)
-local debounce = false
-
--- Function to simulate a mouse click
+-- Function to simulate mouse click
 local function autoClick()
     local VirtualInputManager = game:GetService("VirtualInputManager")
 
     while autoClicking do
-        -- Only simulate click if player exists
-        if Player then
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
-        end
-        task.wait(clickInterval)  -- Since it's 0, this will execute immediately
-    end
-end
-
--- Function to teleport objects to the player's position
-local function movePartsToPlayer()
-    local junkFolder = Workspace:FindFirstChild("Junk")
-
-    if junkFolder and junkFolder:IsA("Folder") then
-        local playerChar = Player.Character
-        local playerHumanoidRootPart = playerChar and playerChar:FindFirstChild("HumanoidRootPart")
+        wait(clickInterval)
         
-        if playerHumanoidRootPart then
-            local playerPosition = playerHumanoidRootPart.Position
-
-            for _, obj in ipairs(junkFolder:GetDescendants()) do
-                if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
-                    obj.CFrame = CFrame.new(playerPosition)
-                end
-            end
+        -- Check if the player is present
+        if game.Players.LocalPlayer then
+            -- Simulate mouse click
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
         end
     end
 end
 
--- Function to toggle auto-clicker and teleporting
+-- Key press function to start/stop auto-clicking
 local function onKeyPress(input, gameProcessedEvent)
-    if gameProcessedEvent or debounce then return end
-
-    debounce = true
-    task.delay(0.2, function() debounce = false end) -- Optional debounce delay
-
-    if input.KeyCode == toggleKey then
+    if input.KeyCode == toggleKey and not gameProcessedEvent then
         autoClicking = not autoClicking
         if autoClicking then
-            -- Start auto-clicking instantly without delay
-            spawn(autoClick)
+            spawn(autoClick) -- Run auto-clicker in a new thread
         end
-    elseif input.KeyCode == teleportKey then
-        teleporting = not teleporting
     end
 end
 
--- Continuous teleporting when enabled
-RunService.RenderStepped:Connect(function()
-    if teleporting then
-        movePartsToPlayer()
-    end
-end)
-
--- Connect the key press event to toggle functions
-UserInputService.InputBegan:Connect(onKeyPress)
-
-
+-- Connect key press event to toggle auto-clicker
+game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 
 
 
