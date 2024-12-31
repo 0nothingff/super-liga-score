@@ -336,59 +336,58 @@ end)
 local player = game.Players.LocalPlayer
 local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to track
 
--- Separate keybinds for teleporting and auto-clicking
-local keybind_tp_ball = Enum.KeyCode.One -- Key for teleport and following ball
-local keybind_auto_clicker = Enum.KeyCode.V -- Key for auto-clicking
+-- Keybinds
+local keybind_tp_and_auto_follow = Enum.KeyCode.One -- Teleport + Follow + Auto-Click (combined)
+local keybind_auto_clicker_just = Enum.KeyCode.V -- Just Auto-Click (independent)
 
-local isFollowing = false
+-- States
+local isAutoFollowActive = false
+local autoClickingJust = false
 local footballs = {} -- List of footballs to track
-local autoClicking = false -- Auto-clicker state
-local clickInterval = 0 -- Interval between clicks (in seconds)
-local autoClickThread -- Variable to hold the thread for the auto-clicker
+local clickInterval = 0.1 -- Interval between clicks (in seconds)
 
--- Function to teleport and follow footballs
-local function teleportAndFollow()
+-- Combined function: Teleport, follow, and auto-click
+local function teleportAndAutoFollow()
     local character = player.Character or player.CharacterAdded:Wait()
     local rootPart = character:WaitForChild("HumanoidRootPart")
 
-    -- Teleport all footballs (kick1, kick2, kick3, Football) in the Junk folder
     for _, obj in ipairs(junkFolder:GetChildren()) do
         if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
-            -- Add object to the list if not already present
             if not table.find(footballs, obj) then
                 table.insert(footballs, obj)
             end
-            -- Teleport object to player's position
             obj.CFrame = CFrame.new(rootPart.Position)
         end
     end
 
-    -- Loop to keep following the player
-    isFollowing = true
-    while isFollowing do
-        for _, football in ipairs(footballs) do
-            if football then
-                -- Keep football at the player's position
-                football.CFrame = CFrame.new(rootPart.Position)
+    -- Begin the combined follow and auto-click loop
+    isAutoFollowActive = true
+    task.spawn(function()
+        local VirtualInputManager = game:GetService("VirtualInputManager")
+        while isAutoFollowActive do
+            for _, football in ipairs(footballs) do
+                if football and football.Parent then
+                    football.CFrame = CFrame.new(rootPart.Position)
+                end
             end
+            -- Simulate mouse click
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
+            task.wait(clickInterval)
         end
-        wait(0) -- Minimal wait to allow fast execution
-    end
+    end)
 end
 
--- Function to stop following
-local function stopFollowing()
-    isFollowing = false
+-- Function to stop the combined behavior
+local function stopAutoFollow()
+    isAutoFollowActive = false
 end
 
--- Function to simulate mouse click
-local function autoClick()
+-- Auto-clicker for "just" (independent)
+local function autoClickJust()
     local VirtualInputManager = game:GetService("VirtualInputManager")
-
-    while autoClicking do
-        wait(clickInterval)
-
-        -- Simulate mouse click if the player is still present
+    while autoClickingJust do
+        task.wait(clickInterval)
         if game.Players.LocalPlayer then
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
             VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
@@ -396,30 +395,31 @@ local function autoClick()
     end
 end
 
--- Key press function to toggle teleporting and auto-clicking
+-- Key press function for behaviors
 local function onKeyPress(input, gameProcessedEvent)
+    if gameProcessedEvent then return end -- Skip if the key event is already processed
+
     if input.UserInputType == Enum.UserInputType.Keyboard then
-        if input.KeyCode == keybind_tp_ball and not gameProcessedEvent then
-            -- Toggle teleporting and following
-            if isFollowing then
-                stopFollowing()  -- Stop following
+        if input.KeyCode == keybind_tp_and_auto_follow then
+            -- Toggle combined behavior (teleport + follow + auto-click)
+            if isAutoFollowActive then
+                stopAutoFollow()
             else
-                teleportAndFollow()  -- Start teleport and follow
+                teleportAndAutoFollow()
             end
-        elseif input.KeyCode == keybind_auto_clicker and not gameProcessedEvent then
-            -- Toggle auto-clicking
-            if not autoClicking then
-                autoClicking = true
-                -- Start auto-clicking in a new thread
-                spawn(autoClick)
+        elseif input.KeyCode == keybind_auto_clicker_just then
+            -- Toggle Auto-Clicker (auto_clicker_just)
+            if not autoClickingJust then
+                autoClickingJust = true
+                task.spawn(autoClickJust)
             else
-                autoClicking = false
+                autoClickingJust = false
             end
         end
     end
 end
 
--- Connect the key press event to the toggle function
+-- Connect the key press event
 game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
 
 -- Handle adding new footballs to the Junk folder
@@ -433,22 +433,22 @@ end)
 
 -- Handle removing footballs from the Junk folder
 junkFolder.ChildRemoved:Connect(function(child)
-    if child:IsA("BasePart") and (child.Name == "kick1" or child.Name == "kick2" or child.Name == "kick3" or child.Name == "Football") then
-        for i, football in ipairs(footballs) do
-            if football == child then
-                table.remove(footballs, i)
-                break
-            end
+    for i, football in ipairs(footballs) do
+        if football == child then
+            table.remove(footballs, i)
+            break
         end
     end
 end)
 
--- Stop following if the player leaves the game
+-- Stop combined behavior if the player leaves the game
 game:GetService("Players").PlayerRemoving:Connect(function(removedPlayer)
     if removedPlayer == player then
-        stopFollowing()
+        stopAutoFollow()
+        autoClickingJust = false
     end
 end)
+
 
 
 
