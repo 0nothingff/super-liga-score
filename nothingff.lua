@@ -189,11 +189,11 @@ end
 local player = game.Players.LocalPlayer
 local football = workspace.Junk:FindFirstChild("Football")
 
--- Pozycje dla drużyn
+-- Positions for teams
 local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
 local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
 
--- Funkcja do teleportacji piłki
+-- Function to teleport the football
 local function teleportFootball(position)
     local success, err = pcall(function()
         if football and football:IsA("BasePart") then
@@ -205,20 +205,20 @@ local function teleportFootball(position)
     end
 end
 
--- Sprawdzanie drużyny i teleportacja piłki
+-- Check team and teleport football
 local function checkAndTeleportFootball()
     local success, err = pcall(function()
-        local team = player.Team -- Drużyna gracza
+        local team = player.Team -- Player's team
 
         if team then
-            print("--->", team.Name)
+            warn("🙃", team.Name)
             if team.Name == "Home" then
                 teleportFootball(homePosition)
             elseif team.Name == "Away" then
                 teleportFootball(awayPosition)
             end
         else
-            print("--->Lobby")
+            warn("-")
         end
     end)
     if not success then
@@ -226,7 +226,9 @@ local function checkAndTeleportFootball()
     end
 end
 
--- Obsługa klawisza G
+
+
+-- Key press handling for "G"
 local UIS = game:GetService("UserInputService")
 UIS.InputBegan:Connect(function(input, gameProcessed)
     if not gameProcessed and input.KeyCode == Enum.KeyCode.G then
@@ -234,7 +236,7 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
--- Restartowanie po zmianie futbolówki
+-- Restarting on football changes
 local function updateFootballReference()
     local success, err = pcall(function()
         football = workspace.Junk:FindFirstChild("Football")
@@ -247,7 +249,7 @@ local function updateFootballReference()
     end
 end
 
--- Nasłuchiwanie na dodanie piłki do workspace
+-- Listen for football being added to workspace
 workspace.Junk.ChildAdded:Connect(function(child)
     local success, err = pcall(function()
         if child.Name == "Football" and child:IsA("BasePart") then
@@ -260,7 +262,7 @@ workspace.Junk.ChildAdded:Connect(function(child)
     end
 end)
 
--- Początkowa konfiguracja piłki
+-- Initial football setup
 local success, err = pcall(function()
     if football and football:IsA("BasePart") then
         football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
@@ -270,7 +272,7 @@ if not success then
     warn("Error during initial football configuration: ", err)
 end
 
--- Trigger dla nowych postaci
+-- Trigger for new characters
 player.CharacterAdded:Connect(function()
     local success, err = pcall(function()
         updateFootballReference()
@@ -279,6 +281,7 @@ player.CharacterAdded:Connect(function()
         warn("Error handling CharacterAdded: ", err)
     end
 end)
+
 
 
 
