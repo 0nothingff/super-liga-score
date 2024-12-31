@@ -85,7 +85,7 @@ else
     print("-")
 end
 
-
+wait ("0.2")
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
@@ -993,15 +993,3 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
 
-wait ("5")
-Fluent:Notify({
-    Title = "nothing",
-    Content = "Enjoy the scripts",
-    Duration = 15
-})
-wait ("15.2")
-Fluent:Notify({
-    Title = "nothing",
-    Content = "👍👍",
-    Duration = 3.5
-})
