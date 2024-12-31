@@ -91,11 +91,7 @@ end
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
-Fluent:Notify({
-    Title = "nothing",
-    Content = "start load",
-    Duration = 3
-})
+
 -- Create window
 local Window = Fluent:CreateWindow({
     Title = "Super League Soccer!",
@@ -980,11 +976,6 @@ Players.PlayerRemoving:Connect(UpdatePlayerList)
 
 
 
-Fluent:Notify({
-    Title = "nothing",
-    Content = "end load",
-    Duration = 3
-})
 
 SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
@@ -996,4 +987,192 @@ InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
+--lag fr
+wait ("1")
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+Fluent:Notify({
+    Title = "",
+    Content = "",
+    Duration = 0.1
+})
+
+
+Fluent:Notify({
+    Title = "",
+    Content = "🙃",
+    Duration = 2.5
+})
 
