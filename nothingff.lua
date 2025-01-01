@@ -982,5 +982,5 @@ Fluent:Notify({
 Fluent:Notify({
     Title = "",
     Content = "🙃🙃🙃",
-    Duration = 2
+    Duration = 3
 })
