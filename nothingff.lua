@@ -113,6 +113,7 @@ local Tabs = {
         Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
         emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
         tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
+		    keybinds = Window:AddTab({ Title = "keybinds", Icon = "play" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
 
@@ -128,58 +129,6 @@ local defaultColor = Color3.fromRGB(255, 255, 255)
 
 
 
-
-
-
--- Boost Speed
-local player = game.Players.LocalPlayer
-local UIS = game:GetService("UserInputService")
-
-local boostActive = false
-
--- Function to boost speed
-local function boostSpeed(character)
-    if not boostActive and character then
-        boostActive = true
-
-        -- Add force to push the character forward
-        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-        if humanoidRootPart then
-            local bodyVelocity = Instance.new("BodyVelocity")
-            bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Max force
-            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Boost force
-            bodyVelocity.Parent = humanoidRootPart
-
-            -- Remove BodyVelocity after 0.05 seconds
-            wait(0.05)
-            bodyVelocity:Destroy()
-        end
-
-        -- Reset boost availability
-        wait(1)
-        boostActive = false
-    end
-end
-
--- Set up boost for the character
-local function setupCharacter(character)
-    local humanoid = character:WaitForChild("Humanoid")
-    
-    -- Listen for the LeftShift key press to activate boost
-    UIS.InputBegan:Connect(function(input, gameProcessed)
-        if not gameProcessed and input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == Enum.KeyCode.LeftShift then
-            boostSpeed(character)
-        end
-    end)
-end
-
--- Trigger setup for new characters
-player.CharacterAdded:Connect(setupCharacter)
-
--- Handle current character setup (if it exists)
-if player.Character then
-    setupCharacter(player.Character)
-end
 
 
 
@@ -213,19 +162,17 @@ local function checkAndTeleportFootball()
     end
 end
 
--- Obsługa naciśnięcia klawisza "G"
-local debounce = false
-local UIS = game:GetService("UserInputService")
-UIS.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed or debounce then return end
-    debounce = true
 
-    if input.KeyCode == Enum.KeyCode.G then
+
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "gol",
+    Mode = "Toggle",
+    Default = "G",
+    Callback = function()
         checkAndTeleportFootball()
-    end
-
-    debounce = false
-end)
+    end,  -- Correct placement of comma
+    debounce = false  -- Correct placement of debounce property
+})
 
 -- Funkcja aktualizująca referencję do piłki
 local function updateFootballReference()
@@ -257,70 +204,11 @@ player.CharacterAdded:Connect(function()
     updateFootballReference()
 end)
 
-
-
-
-
-
-
-
-
-
--- tp ball 
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-
-local player = Players.LocalPlayer
-
--- Function to move parts to player's position
-local function movePartsToPlayer()
-    local junkFolder = Workspace:FindFirstChild("Junk")
-    if not junkFolder or not junkFolder:IsA("Folder") then
-        warn("Junk folder not found in Workspace")
-        return
-    end
-
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    if not rootPart then
-        warn("Player's HumanoidRootPart not found")
-        return
-    end
-
-    local playerPosition = rootPart.Position
-    for _, obj in ipairs(junkFolder:GetDescendants()) do
-        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
-            pcall(function()
-                obj.Position = playerPosition
-            end)
-        end
-    end
-end
-
--- Input handling for moving parts to the player
-local UserInputService = game:GetService("UserInputService")
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-    if gameProcessed then return end
-
-    if input.KeyCode == Enum.KeyCode.LeftControl then
-        movePartsToPlayer()
-    end
-end)
-
-
-
-
-
-
-
-
----one good farming xp 2 players use same xp and V auto clicker
+-- one i V
 local player = game.Players.LocalPlayer
 local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to track
 
--- Keybinds
-local keybind_tp_and_auto_follow = Enum.KeyCode.One -- Teleport + Follow + Auto-Click (combined)
-local keybind_auto_clicker_just = Enum.KeyCode.V -- Just Auto-Click (independent)
+
 
 -- States
 local isAutoFollowActive = false
@@ -378,31 +266,34 @@ local function autoClickJust()
 end
 
 -- Key press function for behaviors
-local function onKeyPress(input, gameProcessedEvent)
-    if gameProcessedEvent then return end -- Skip if the key event is already processed
 
-    if input.UserInputType == Enum.UserInputType.Keyboard then
-        if input.KeyCode == keybind_tp_and_auto_follow then
-            -- Toggle combined behavior (teleport + follow + auto-click)
-            if isAutoFollowActive then
-                stopAutoFollow()
-            else
-                teleportAndAutoFollow()
-            end
-        elseif input.KeyCode == keybind_auto_clicker_just then
-            -- Toggle Auto-Clicker (auto_clicker_just)
-            if not autoClickingJust then
-                autoClickingJust = true
-                task.spawn(autoClickJust)
-            else
-                autoClickingJust = false
-            end
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "auto clicker",
+    Mode = "Toggle",
+    Default = "V",
+    Callback = function()
+        if not autoClickingJust then
+            autoClickingJust = true
+            task.spawn(autoClickJust)
+        else
+            autoClickingJust = false
         end
-    end
-end
+    end,
+})
 
--- Connect the key press event
-game:GetService("UserInputService").InputBegan:Connect(onKeyPress)
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "spam ball",
+    Mode = "Toggle",
+    Default = "One",
+    Callback = function()
+        if isAutoFollowActive then
+            stopAutoFollow()
+        else
+            teleportAndAutoFollow()
+        end
+    end,
+})
+
 
 -- Handle adding new footballs to the Junk folder
 junkFolder.ChildAdded:Connect(function(child)
@@ -430,6 +321,59 @@ game:GetService("Players").PlayerRemoving:Connect(function(removedPlayer)
         autoClickingJust = false
     end
 end)
+
+local player = game.Players.LocalPlayer
+local UIS = game:GetService("UserInputService")
+
+local boostActive = false
+
+-- Function to boost speed
+local function boostSpeed(character)
+    if not boostActive and character then
+        boostActive = true
+
+        -- Add force to push the character forward
+        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart then
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Max force
+            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Boost force
+            bodyVelocity.Parent = humanoidRootPart
+
+            -- Remove BodyVelocity after 0.05 seconds
+            wait(0.05)
+            bodyVelocity:Destroy()
+        end
+
+        -- Reset boost availability
+        wait(1)
+        boostActive = false
+    end
+end
+
+
+-- Set up boost for the character
+local function setupCharacter(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    
+    -- Add the keybind for boosting speed
+    Tabs.keybinds:AddKeybind("Keybind", {
+        Title = "boost speed",
+        Mode = "Toggle",
+        Default = "LeftShift",
+        Callback = function()
+            boostSpeed(character)
+        end,
+    })
+end
+
+-- Trigger setup for new characters
+player.CharacterAdded:Connect(setupCharacter)
+
+-- Handle current character setup (if it exists)
+if player.Character then
+    setupCharacter(player.Character)
+end
 
 
 
@@ -768,6 +712,14 @@ local function kickFootballInDirection(direction)
     end
 end
 
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "control ball",
+    Mode = "Toggle",
+    Default = "Two",
+    Callback = function()
+        toggleControls()
+    end,
+})
 -- Key bindings to kick the football in different directions using W, A, S, D
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if controlEnabled then  -- Only allow kicking if controls are enabled
@@ -786,12 +738,7 @@ UserInputService.InputBegan:Connect(function(input, gameProcessed)
             moveFootballVertical("up")  -- Move ball up when "X" is pressed
         elseif input.KeyCode == Enum.KeyCode.Z and not gameProcessed then
             moveFootballVertical("down")  -- Move ball down when "Z" is pressed
-        end
-    end
-    
-    -- Toggle controls when the "F" key is pressed
-    if input.KeyCode == Enum.KeyCode.Two and not gameProcessed then
-        toggleControls()
+        end   
     end
 end)
 
@@ -868,7 +815,7 @@ local Dropdown = Tabs.emote:AddDropdown("EmoteDropdown", {
 })
 
 -- Keybind for activating the emote (toggle play/stop)
-local Keybind = Tabs.emote:AddKeybind("Keybind", {
+local Keybind = Tabs.keybinds:AddKeybind("Keybind", {
     Title = "Emote play/stop 2x times",
     Mode = "Toggle",
     Default = "Four", -- Change this to any desired key
@@ -941,7 +888,7 @@ local function TeleportFootballToPlayer()
 end
 
 -- Add keybind to teleport football
-Tabs.tab1:AddKeybind("Keybind", {
+Tabs.keybinds:AddKeybind("Keybind", {
     Title = "TP ball to Player",
     Mode = "Toggle",
     Default = "Three", -- Change this key if needed
