@@ -1,4 +1,8 @@
-wait ("0.1")
+print ("~~")
+
+wait ("0.2")
+
+print ("~~")
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -183,100 +187,78 @@ end
 
 --gol
 local player = game.Players.LocalPlayer
-local football = workspace.Junk:FindFirstChild("Football")
+local football = nil -- Referencja do piłki
 
--- Positions for teams
+-- Stałe pozycje dla drużyn
 local homePosition = Vector3.new(-14.130847, 4.00001049, -188.18988)
 local awayPosition = Vector3.new(14.0604515, 4.00001144, 187.836166)
 
--- Function to teleport the football
-local function teleportFootball(position)
-    local success, err = pcall(function()
-        if football and football:IsA("BasePart") then
-            football.CFrame = CFrame.new(position)
-        end
-    end)
-    if not success then
-        warn("Error teleporting football: ", err)
+-- Funkcja teleportująca obiekt (piłkę)
+local function teleportObject(object, position)
+    if object and object:IsA("BasePart") then
+        object.CFrame = CFrame.new(position)
     end
 end
 
--- Check team and teleport football
+-- Funkcja sprawdzająca drużynę gracza i teleportująca piłkę
 local function checkAndTeleportFootball()
-    local success, err = pcall(function()
-        local team = player.Team -- Player's team
-
-        if team then
-            warn("🙃", team.Name)
-            if team.Name == "Home" then
-                teleportFootball(homePosition)
-            elseif team.Name == "Away" then
-                teleportFootball(awayPosition)
-            end
-        else
-            warn("-")
+    local team = player.Team
+    if team then
+        warn("🙃", team.Name)
+        if team.Name == "Home" then
+            teleportObject(football, homePosition)
+        elseif team.Name == "Away" then
+            teleportObject(football, awayPosition)
         end
-    end)
-    if not success then
-        warn("Error checking and teleporting football: ", err)
     end
 end
 
-
-
--- Key press handling for "G"
+-- Obsługa naciśnięcia klawisza "G"
+local debounce = false
 local UIS = game:GetService("UserInputService")
 UIS.InputBegan:Connect(function(input, gameProcessed)
-    if not gameProcessed and input.KeyCode == Enum.KeyCode.G then
+    if gameProcessed or debounce then return end
+    debounce = true
+
+    if input.KeyCode == Enum.KeyCode.G then
         checkAndTeleportFootball()
     end
+
+    debounce = false
 end)
 
--- Restarting on football changes
+-- Funkcja aktualizująca referencję do piłki
 local function updateFootballReference()
-    local success, err = pcall(function()
-        football = workspace.Junk:FindFirstChild("Football")
+    local junkFolder = workspace:FindFirstChild("Junk")
+    if junkFolder then
+        football = junkFolder:FindFirstChild("Football")
         if football and football:IsA("BasePart") then
             football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
         end
-    end)
-    if not success then
-        warn("Error updating football reference: ", err)
     end
 end
 
--- Listen for football being added to workspace
-workspace.Junk.ChildAdded:Connect(function(child)
-    local success, err = pcall(function()
+-- Nasłuch na dodawanie nowej piłki do Junk
+local junkFolder = workspace:WaitForChild("Junk", 10) -- Czekanie na załadowanie folderu Junk
+if junkFolder then
+    junkFolder.ChildAdded:Connect(function(child)
         if child.Name == "Football" and child:IsA("BasePart") then
             football = child
             football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
         end
     end)
-    if not success then
-        warn("Error handling ChildAdded: ", err)
-    end
-end)
-
--- Initial football setup
-local success, err = pcall(function()
-    if football and football:IsA("BasePart") then
-        football:GetPropertyChangedSignal("Parent"):Connect(updateFootballReference)
-    end
-end)
-if not success then
-    warn("Error during initial football configuration: ", err)
 end
 
--- Trigger for new characters
+-- Początkowa konfiguracja piłki
+updateFootballReference()
+
+-- Nasłuch na respawn gracza
 player.CharacterAdded:Connect(function()
-    local success, err = pcall(function()
-        updateFootballReference()
-    end)
-    if not success then
-        warn("Error handling CharacterAdded: ", err)
-    end
+    updateFootballReference()
 end)
+
+
+
 
 
 
@@ -987,192 +969,18 @@ InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
---lag fr
-wait ("1")
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-Fluent:Notify({
-    Title = "",
-    Content = "",
-    Duration = 0.1
-})
-
-
 Fluent:Notify({
     Title = "",
     Content = "🙃",
-    Duration = 2.5
+    Duration = 1
 })
-
+Fluent:Notify({
+    Title = "",
+    Content = "🙃🙃",
+    Duration = 2
+})
+Fluent:Notify({
+    Title = "",
+    Content = "🙃🙃🙃",
+    Duration = 2
+})
