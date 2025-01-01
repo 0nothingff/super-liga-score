@@ -376,7 +376,41 @@ if player.Character then
 end
 
 
+-- tp ball 
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local player = Players.LocalPlayer
+-- Function to move parts to player's position
+local function movePartsToPlayer()
+    local junkFolder = Workspace:FindFirstChild("Junk")
+    if not junkFolder or not junkFolder:IsA("Folder") then
+        warn("Junk folder not found in Workspace")
+        return
+    end
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        warn("Player's HumanoidRootPart not found")
+        return
+    end
+    local playerPosition = rootPart.Position
+    for _, obj in ipairs(junkFolder:GetDescendants()) do
+        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
+            pcall(function()
+                obj.Position = playerPosition
+            end)
+        end
+    end
+end
 
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "tp ball",
+    Mode = "Toggle",
+    Default = "LeftControl",
+    Callback = function()
+        movePartsToPlayer()
+    end,
+})
 
 
 
