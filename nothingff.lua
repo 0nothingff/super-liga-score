@@ -426,9 +426,13 @@ Tabs.keybinds:AddKeybind("Keybind", {
 local isHitboxActive = false
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
+local teleportEnabled = false
 local loopEnabled = false
 local isAutoKickEnabled = false -- Added variable to control auto kick functionality
 
+-- Ustawienia pozycji
+local Away = CFrame.new(0.283999115, 4.0250001, -20.9191837) -- Pozycja Away
+local Home = CFrame.new(0.271869421, 4.0250001, 20.0689564) -- Pozycja Home
 -- Default sizes for hitboxes when turned off
 local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
 
@@ -436,6 +440,8 @@ local player = game.Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local character = player.Character or player.CharacterAdded:Wait()
+
 
 -- Hitbox Function
 local function hitbox()
@@ -486,6 +492,7 @@ local function resetHitboxSizes()
     end
 end
 
+
 -- Teleport Function
 local function toggleTeleport()
     isTeleportingEnabled = not isTeleportingEnabled
@@ -506,6 +513,26 @@ local function toggleTeleport()
         end)
     end
 end
+
+local function teleportLoop()
+    while teleportEnabled do
+        if character and character:FindFirstChild("HumanoidRootPart") then
+            local rootPart = character.HumanoidRootPart
+
+            -- Teleportowanie zależne od teamu
+            if player.Team == nil then
+            elseif player.Team.Name == "Away" then
+                rootPart.CFrame = Away
+            elseif player.Team.Name == "Home" then
+                rootPart.CFrame = Home
+            end
+        end
+        wait(0.4) -- 0.2 sekundy przerwy
+    end
+end
+player.CharacterAdded:Connect(function(newCharacter)
+    character = newCharacter
+end)
 
 -- Auto Clicker Function
 local function autoClick()
@@ -588,6 +615,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
     Callback = function()
         isHitboxActive = not isHitboxActive
         isAutoClickerActive = not isAutoClickerActive
+        teleportEnabled = not teleportEnabled
         toggleTeleport()
 
         if isHitboxActive then
@@ -606,14 +634,15 @@ Tabs.keybinds:AddKeybind("Keybind", {
         if loopEnabled then
             task.spawn(loop)
         end
-		        isAutoKickEnabled = not isAutoKickEnabled
-        if isAutoKickEnabled then
-            warn("Auto Kick Enabled")  -- Optionally print when auto kick is enabled
-        else
-            warn("Auto Kick Disabled")  -- Optionally print when auto kick is disabled
+        isAutoKickEnabled = not isAutoKickEnabled
+        if teleportEnabled then
+            spawn(teleportLoop)
         end
-    end,
+    end
 })
+
+
+
 
 
 
