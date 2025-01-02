@@ -94,7 +94,7 @@ end
 
 -- Ustawienie gradientu dla Power i Stamina
 setGradient(energyBars:FindFirstChild("Power"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to Red
-setGradient(energyBars:FindFirstChild("Stamina"), Color3.new(0, 0, 0), Color3.new(255, 255, 255)) -- Black to White
+setGradient(energyBars:FindFirstChild("Stamina"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to White
 
 
 
@@ -421,40 +421,213 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 
 
+-- op framing
+-- Variables for toggle states
+local isTackleActive = false
+local isHitboxActive = false
+local isTeleportingEnabled = false
+local isAutoClickerActive = false
+local loopEnabled = false
 
--- Ball Hitbox Size Check
-local function checkAndSetTackleHitboxSize(hitbox)
-    -- Check if the hitbox size is not (100, 100, 100)
-    if hitbox.Size ~= Vector3.new(20, 20, 20) then
-        -- If the size is different, set it to (100, 100, 100)
-        hitbox.Size = Vector3.new(20, 20, 20)
+-- Default sizes for hitboxes when turned off
+local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
+local defaultTackleHitboxSize = Vector3.new(2.5703413486480713, 5.7297587394714355, 2.063832998275757)
+
+local player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+
+-- TackleHitbox Function
+local function tackleHitbox()
+    if not isTackleActive then return end
+
+    local function checkAndSetTackleHitboxSize(hitbox)
+        if hitbox.Size ~= Vector3.new(222, 70, 358) then
+            hitbox.Size = Vector3.new(222, 70, 358)
+        end
+    end
+
+    local function dynamicYChange(hitbox)
+        local y = 70
+        while isTackleActive do
+            hitbox.Size = Vector3.new(222, y, 358)
+            y = (y == 70) and 60 or 70
+            task.wait(0.1)
+        end
+    end
+
+    local function onCharacterAdded(character)
+        local hitbox = character:WaitForChild("TackleHitbox", 5)
+        if hitbox then
+            checkAndSetTackleHitboxSize(hitbox)
+            hitbox:GetPropertyChangedSignal("Size"):Connect(function()
+                checkAndSetTackleHitboxSize(hitbox)
+            end)
+            task.spawn(function()
+                dynamicYChange(hitbox)
+            end)
+        end
+    end
+
+    player.CharacterAdded:Connect(onCharacterAdded)
+    if player.Character then
+        onCharacterAdded(player.Character)
     end
 end
 
--- Function to handle player character
-local function onCharacterAdded(character)
-    -- Wait for the TackleHitbox in the player's character
-    local hitbox = character:WaitForChild("TackleHitbox", 5)  -- Timeout 5 seconds for safety
-    
-    if hitbox then
-        -- Set correct hitbox size
-        checkAndSetTackleHitboxSize(hitbox)
-        
-        -- Watch for changes in size and fix it if needed
-        hitbox:GetPropertyChangedSignal("Size"):Connect(function()
-            checkAndSetTackleHitboxSize(hitbox)
+-- Hitbox Function
+local function hitbox()
+    if not isHitboxActive then return end
+
+    local function checkAndSetHitboxSize(hitbox)
+        if hitbox.Size ~= Vector3.new(222, 70, 358) then
+            hitbox.Size = Vector3.new(222, 70, 358)
+        end
+    end
+
+    local function dynamicYChangeHitbox(hitbox)
+        local y = 70
+        while isHitboxActive do
+            hitbox.Size = Vector3.new(222, y, 358)
+            y = (y == 70) and 60 or 70
+            task.wait(0.1)
+        end
+    end
+
+    local function onCharacterAddedHitbox(character)
+        local hitbox = character:WaitForChild("Hitbox", 5)
+        if hitbox then
+            checkAndSetHitboxSize(hitbox)
+            hitbox:GetPropertyChangedSignal("Size"):Connect(function()
+                checkAndSetHitboxSize(hitbox)
+            end)
+            task.spawn(function()
+                dynamicYChangeHitbox(hitbox)
+            end)
+        end
+    end
+
+    player.CharacterAdded:Connect(onCharacterAddedHitbox)
+    if player.Character then
+        onCharacterAddedHitbox(player.Character)
+    end
+end
+
+-- Reset sizes when deactivated
+local function resetHitboxSizes()
+    -- Reset hitbox size
+    if player.Character then
+        local hitbox = player.Character:FindFirstChild("Hitbox")
+        if hitbox then
+            hitbox.Size = defaultHitboxSize
+        end
+
+        -- Reset tackle hitbox size
+        local tackleHitbox = player.Character:FindFirstChild("TackleHitbox")
+        if tackleHitbox then
+            tackleHitbox.Size = defaultTackleHitboxSize
+        end
+    end
+end
+
+-- Teleport Function
+local function toggleTeleport()
+    isTeleportingEnabled = not isTeleportingEnabled
+    if isTeleportingEnabled then
+        task.spawn(function()
+            while isTeleportingEnabled do
+                local team = player.Team
+                if team then
+                    local position = team.Name == "Home" and Vector3.new(-14.130847, 4.00001049, -188.18988) or Vector3.new(14.0604515, 4.00001144, 187.836166)
+                    for _, obj in ipairs(workspace.Junk:GetChildren()) do
+                        if obj:IsA("BasePart") then
+                            obj.CFrame = CFrame.new(position)
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
         end)
     end
 end
 
--- Connect to CharacterAdded event for the LocalPlayer
-local player = game.Players.LocalPlayer
-player.CharacterAdded:Connect(onCharacterAdded)
-
--- Handle current character if it exists
-if player.Character then
-    onCharacterAdded(player.Character)
+-- Auto Clicker Function
+local function autoClick()
+    if not isAutoClickerActive then return end
+    while isAutoClickerActive do
+        task.wait(0)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+        VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+    end
 end
+
+-- Move Parts to Player Function
+local function movePartsToPlayer()
+    local junkFolder = Workspace:FindFirstChild("Junk")
+    if not junkFolder or not junkFolder:IsA("Folder") then
+        return
+    end
+
+    local character = player.Character or player.CharacterAdded:Wait()
+    local rootPart = character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then
+        return
+    end
+
+    local playerPosition = rootPart.Position
+    for _, obj in ipairs(junkFolder:GetDescendants()) do
+        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
+            pcall(function()
+                obj.Position = playerPosition
+            end)
+        end
+    end
+end
+
+-- Loop Function
+local function loop()
+    while loopEnabled do
+        movePartsToPlayer()
+        task.wait(0.1) -- Delay in seconds
+    end
+end
+
+-- Keybinding using Tabs.keybinds:AddKeybind
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "op framing 1 time", 
+    Mode = "Toggle",
+    Default = "T",  -- Default key is "T"
+    Callback = function()
+        isTackleActive = not isTackleActive
+        isHitboxActive = not isHitboxActive
+        isAutoClickerActive = not isAutoClickerActive
+        toggleTeleport()
+
+        if isTackleActive then
+            task.spawn(tackleHitbox)
+        end
+
+        if isHitboxActive then
+            task.spawn(hitbox)
+        end
+
+        if isAutoClickerActive then
+            task.spawn(autoClick)
+        end
+
+        if not isTackleActive or not isHitboxActive then
+            resetHitboxSizes() -- Reset sizes when turned off
+        end
+
+        loopEnabled = not loopEnabled
+        if loopEnabled then
+            task.spawn(loop)
+        end
+    end,
+})
+
+
 
 
 -- Current hitbox settings (active)
