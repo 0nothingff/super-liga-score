@@ -589,7 +589,7 @@ end
 local function loop()
     while loopEnabled do
         movePartsToPlayer()
-        task.wait(0.1) -- Delay in seconds
+        task.wait(0.4) -- Delay in seconds
     end
 end
 
