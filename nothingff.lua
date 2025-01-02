@@ -422,10 +422,12 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 
 -- op framing
+-- Variables for toggle states
 local isHitboxActive = false
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
 local loopEnabled = false
+local isAutoKickEnabled = false -- Added variable to control auto kick functionality
 
 -- Default sizes for hitboxes when turned off
 local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
@@ -546,6 +548,38 @@ local function loop()
     end
 end
 
+-- Function to press E key
+local function pressEKey()
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    wait(0.1)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end
+
+-- Continuously check for the player's model and Ball transparency
+local function continuouslyCheckBallTransparency()
+    while true do
+        if isAutoKickEnabled then
+            if player.Character and player.Character:FindFirstChild("Ball") then
+                local ball = player.Character.Ball
+                if ball.Transparency == 1 then
+                    pressEKey() -- Simulate pressing the "E" key
+                    wait(0.1) -- Delay to simulate key press duration
+                else
+                    wait(0.1) -- Short delay to prevent excessive loop iterations
+                end
+            else
+                warn("Ball or player model not found in Workspace")
+                wait(1) -- Wait for 1 second before rechecking if Ball or player model is not found
+            end
+        else
+            wait(1) -- If auto kick is not enabled, wait before checking again
+        end
+    end
+end
+
+-- Start the continuous checking in a separate coroutine
+coroutine.wrap(continuouslyCheckBallTransparency)()
+
 -- Keybinding using Tabs.keybinds:AddKeybind
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "op framing 1 time", 
@@ -572,8 +606,16 @@ Tabs.keybinds:AddKeybind("Keybind", {
         if loopEnabled then
             task.spawn(loop)
         end
+		        isAutoKickEnabled = not isAutoKickEnabled
+        if isAutoKickEnabled then
+            warn("Auto Kick Enabled")  -- Optionally print when auto kick is enabled
+        else
+            warn("Auto Kick Disabled")  -- Optionally print when auto kick is disabled
+        end
     end,
 })
+
+
 
 --ball track
 local function checkAndSetTackleHitboxSize(hitbox)
