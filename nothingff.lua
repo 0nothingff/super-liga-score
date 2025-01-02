@@ -422,8 +422,6 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 
 -- op framing
--- Variables for toggle states
-local isTackleActive = false
 local isHitboxActive = false
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
@@ -431,50 +429,11 @@ local loopEnabled = false
 
 -- Default sizes for hitboxes when turned off
 local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
-local defaultTackleHitboxSize = Vector3.new(2.5703413486480713, 5.7297587394714355, 2.063832998275757)
 
 local player = game.Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
-
--- TackleHitbox Function
-local function tackleHitbox()
-    if not isTackleActive then return end
-
-    local function checkAndSetTackleHitboxSize(hitbox)
-        if hitbox.Size ~= Vector3.new(222, 70, 358) then
-            hitbox.Size = Vector3.new(222, 70, 358)
-        end
-    end
-
-    local function dynamicYChange(hitbox)
-        local y = 70
-        while isTackleActive do
-            hitbox.Size = Vector3.new(222, y, 358)
-            y = (y == 70) and 60 or 70
-            task.wait(0.1)
-        end
-    end
-
-    local function onCharacterAdded(character)
-        local hitbox = character:WaitForChild("TackleHitbox", 5)
-        if hitbox then
-            checkAndSetTackleHitboxSize(hitbox)
-            hitbox:GetPropertyChangedSignal("Size"):Connect(function()
-                checkAndSetTackleHitboxSize(hitbox)
-            end)
-            task.spawn(function()
-                dynamicYChange(hitbox)
-            end)
-        end
-    end
-
-    player.CharacterAdded:Connect(onCharacterAdded)
-    if player.Character then
-        onCharacterAdded(player.Character)
-    end
-end
 
 -- Hitbox Function
 local function hitbox()
@@ -521,12 +480,6 @@ local function resetHitboxSizes()
         local hitbox = player.Character:FindFirstChild("Hitbox")
         if hitbox then
             hitbox.Size = defaultHitboxSize
-        end
-
-        -- Reset tackle hitbox size
-        local tackleHitbox = player.Character:FindFirstChild("TackleHitbox")
-        if tackleHitbox then
-            tackleHitbox.Size = defaultTackleHitboxSize
         end
     end
 end
@@ -599,14 +552,9 @@ Tabs.keybinds:AddKeybind("Keybind", {
     Mode = "Toggle",
     Default = "T",  -- Default key is "T"
     Callback = function()
-        isTackleActive = not isTackleActive
         isHitboxActive = not isHitboxActive
         isAutoClickerActive = not isAutoClickerActive
         toggleTeleport()
-
-        if isTackleActive then
-            task.spawn(tackleHitbox)
-        end
 
         if isHitboxActive then
             task.spawn(hitbox)
@@ -616,7 +564,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
             task.spawn(autoClick)
         end
 
-        if not isTackleActive or not isHitboxActive then
+        if not isHitboxActive then
             resetHitboxSizes() -- Reset sizes when turned off
         end
 
@@ -626,6 +574,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
         end
     end,
 })
+
 
 
 
