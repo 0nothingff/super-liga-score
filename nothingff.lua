@@ -1,6 +1,6 @@
 print ("~~")
 
-wait ("0.5")
+wait ("0.3")
 
 warn ("~~")
 local player = game.Players.LocalPlayer
@@ -19,17 +19,50 @@ if not gameGui then
     return
 end
 
--- Funkcja do usuwania ekranów
-local function deleteScreen(screen)
-    if screen then
-        screen:Destroy()
+-- Funkcja do rekurencyjnego znajdowania dzieci
+local function findChildRecursive(parent, names)
+    local current = parent
+    for _, name in ipairs(names) do
+        current = current and current:FindFirstChild(name)
+        if not current then break end
+    end
+    return current
+end
+
+-- Funkcja do usuwania elementów z listy nazw
+local function deleteElements(parent, names)
+    for _, name in ipairs(names) do
+        local element = parent:FindFirstChild(name)
+        if element then
+            element:Destroy()
+        end
     end
 end
 
+-- Usuwanie podstawowych elementów GUI
+deleteElements(gameGui, {"Transition", "KeyHints"})
 
--- Usuwanie Transition i KeyHints
-deleteScreen(gameGui:FindFirstChild("Transition"))
-deleteScreen(gameGui:FindFirstChild("KeyHints"))
+-- Usuwanie PartyLeader w pętli
+local party = gameGui:FindFirstChild("Party")
+if party then
+    local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
+    if members then
+        for _, button in ipairs(members:GetChildren()) do
+            if button.Name == "CircleButton" and button:FindFirstChild("Background") then
+                local partyLeader = button.Background:FindFirstChild("PartyLeader")
+                if partyLeader then
+                    partyLeader:Destroy()
+                    break -- Usuwamy tylko pierwszego lidera
+                end
+            end
+        end
+    else
+        print("-")
+    end
+else
+    print("-")
+end
+
 
 -- Referencje do MatchHUD i EnergyBars
 local matchHUD = gameGui:FindFirstChild("MatchHUD")
@@ -63,32 +96,6 @@ end
 setGradient(energyBars:FindFirstChild("Power"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to Red
 setGradient(energyBars:FindFirstChild("Stamina"), Color3.new(0, 0, 0), Color3.new(255, 255, 255)) -- Black to White
 
--- Usuwanie PartyLeader
-local party = gameGui:FindFirstChild("Party")
-if party then
-    local topbarLayout = party:FindFirstChild("TopbarLayout")
-    local partyLayout = topbarLayout and topbarLayout:FindFirstChild("PartyLayout")
-    local members = partyLayout and partyLayout:FindFirstChild("Members")
-
-    if members then
-        -- Szukamy odpowiedniego CircleButton
-        local buttons = members:GetChildren()
-        for _, button in ipairs(buttons) do
-            if button.Name == "CircleButton" and button:FindFirstChild("Background") then
-                local background = button.Background
-                local partyLeader = background:FindFirstChild("PartyLeader")
-                if partyLeader then
-                    partyLeader:Destroy()
-                    break -- Usuwamy tylko pierwszego lidera
-                end
-            end
-        end
-    else
-        print("-")
-    end
-else
-    print("-")
-end
 
 
 --gui
