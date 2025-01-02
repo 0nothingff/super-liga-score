@@ -447,15 +447,15 @@ local function hitbox()
     if not isHitboxActive then return end
 
     local function checkAndSetHitboxSize(hitbox)
-        if hitbox.Size ~= Vector3.new(222, 70, 358) then
-            hitbox.Size = Vector3.new(222, 70, 358)
+        if hitbox.Size ~= Vector3.new(222, 70, 418) then
+            hitbox.Size = Vector3.new(222, 70, 418)
         end
     end
 
     local function dynamicYChangeHitbox(hitbox)
         local y = 70
         while isHitboxActive do
-            hitbox.Size = Vector3.new(222, y, 358)
+            hitbox.Size = Vector3.new(222, y, 418)
             y = (y == 70) and 60 or 70
             task.wait(0.1)
         end
