@@ -431,8 +431,8 @@ local loopEnabled = false
 local isAutoKickEnabled = false -- Added variable to control auto kick functionality
 
 -- Ustawienia pozycji
-local Away = CFrame.new(0.283999115, 4.0250001, -20.9191837) -- Pozycja Away
-local Home = CFrame.new(0.271869421, 4.0250001, 20.0689564) -- Pozycja Home
+local Home = CFrame.new(0.283999115, 4.0250001, -20.9191837) -- Pozycja Away
+local Away = CFrame.new(0.271869421, 4.0250001, 20.0689564) -- Pozycja Home
 -- Default sizes for hitboxes when turned off
 local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
 
@@ -441,7 +441,6 @@ local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local character = player.Character or player.CharacterAdded:Wait()
-
 
 -- Hitbox Function
 local function hitbox()
@@ -492,7 +491,6 @@ local function resetHitboxSizes()
     end
 end
 
-
 -- Teleport Function
 local function toggleTeleport()
     isTeleportingEnabled = not isTeleportingEnabled
@@ -518,7 +516,6 @@ local function teleportLoop()
     while teleportEnabled do
         if character and character:FindFirstChild("HumanoidRootPart") then
             local rootPart = character.HumanoidRootPart
-
             -- Teleportowanie zależne od teamu
             if player.Team == nil then
             elseif player.Team.Name == "Away" then
@@ -527,7 +524,7 @@ local function teleportLoop()
                 rootPart.CFrame = Home
             end
         end
-        wait(0.4) -- 0.2 sekundy przerwy
+        wait(0.4) -- 0.4 sekundy przerwy
     end
 end
 player.CharacterAdded:Connect(function(newCharacter)
@@ -613,28 +610,34 @@ Tabs.keybinds:AddKeybind("Keybind", {
     Mode = "Toggle",
     Default = "T",  -- Default key is "T"
     Callback = function()
+        -- Toggle states
         isHitboxActive = not isHitboxActive
         isAutoClickerActive = not isAutoClickerActive
         teleportEnabled = not teleportEnabled
         toggleTeleport()
 
+        -- Activate or deactivate hitbox
         if isHitboxActive then
             task.spawn(hitbox)
+        else
+            resetHitboxSizes() -- Reset sizes when turned off
         end
 
+        -- Activate or deactivate auto clicker
         if isAutoClickerActive then
             task.spawn(autoClick)
         end
 
-        if not isHitboxActive then
-            resetHitboxSizes() -- Reset sizes when turned off
-        end
-
+        -- Start or stop teleport loop
         loopEnabled = not loopEnabled
         if loopEnabled then
             task.spawn(loop)
         end
+
+        -- Toggle auto kick
         isAutoKickEnabled = not isAutoKickEnabled
+        
+        -- If teleporting is enabled, start the teleport loop
         if teleportEnabled then
             spawn(teleportLoop)
         end
