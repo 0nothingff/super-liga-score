@@ -421,9 +421,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 
 
--- op framing
 -- Variables for toggle states
-local isHitboxActive = false
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
 local teleportEnabled = false
@@ -433,7 +431,8 @@ local isAutoKickEnabled = false -- Added variable to control auto kick functiona
 -- Ustawienia pozycji
 local Home = CFrame.new(0.283999115, 4.0250001, -20.9191837) -- Pozycja Away
 local Away = CFrame.new(0.271869421, 4.0250001, 20.0689564) -- Pozycja Home
--- Default sizes for hitboxes when turned off
+
+
 local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
 
 local player = game.Players.LocalPlayer
@@ -442,47 +441,46 @@ local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local character = player.Character or player.CharacterAdded:Wait()
 
+-- Variables for toggle states
+local isHitboxActive = false
+local loopActive = false
+
 -- Hitbox Function
-local function hitbox()
-    if not isHitboxActive then return end
-
-    local function checkAndSetHitboxSize(hitbox)
-        if hitbox.Size ~= Vector3.new(222, 70, 418) then
-            hitbox.Size = Vector3.new(222, 70, 418)
-        end
+local function manageHitboxSize(hitbox)
+    while isHitboxActive and loopActive do
+        hitbox.Size = Vector3.new(222, 70, 418) -- Dynamic size in loop
+        task.wait(0.1) -- Adjust interval as needed
     end
+end
 
-    local function dynamicYChangeHitbox(hitbox)
-        local y = 70
-        while isHitboxActive do
-            hitbox.Size = Vector3.new(222, y, 418)
-            y = (y == 70) and 60 or 70
-            task.wait(0.1)
-        end
-    end
+local function activateHitbox()
+    if isHitboxActive then return end
+    isHitboxActive = true
 
     local function onCharacterAddedHitbox(character)
         local hitbox = character:WaitForChild("Hitbox", 5)
         if hitbox then
-            checkAndSetHitboxSize(hitbox)
-            hitbox:GetPropertyChangedSignal("Size"):Connect(function()
-                checkAndSetHitboxSize(hitbox)
-            end)
+            loopActive = true
             task.spawn(function()
-                dynamicYChangeHitbox(hitbox)
+                manageHitboxSize(hitbox)
             end)
         end
     end
 
     player.CharacterAdded:Connect(onCharacterAddedHitbox)
+
+    -- Apply to current character if exists
     if player.Character then
         onCharacterAddedHitbox(player.Character)
     end
 end
 
--- Reset sizes when deactivated
-local function resetHitboxSizes()
-    -- Reset hitbox size
+local function deactivateHitbox()
+    if not isHitboxActive then return end
+    isHitboxActive = false
+    loopActive = false
+
+    -- Reset hitbox size to default once
     if player.Character then
         local hitbox = player.Character:FindFirstChild("Hitbox")
         if hitbox then
@@ -506,7 +504,7 @@ local function toggleTeleport()
                         end
                     end
                 end
-                task.wait(0.1)
+                task.wait(0.01)
             end
         end)
     end
@@ -568,7 +566,7 @@ end
 local function loop()
     while loopEnabled do
         movePartsToPlayer()
-        task.wait(0.4) -- Delay in seconds
+        task.wait(0.3) -- Delay in seconds
     end
 end
 
@@ -606,22 +604,15 @@ coroutine.wrap(continuouslyCheckBallTransparency)()
 
 -- Keybinding using Tabs.keybinds:AddKeybind
 Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "op framing 1 time", 
+    Title = "auto gol (not use you gk)", 
     Mode = "Toggle",
     Default = "T",  -- Default key is "T"
     Callback = function()
         -- Toggle states
-        isHitboxActive = not isHitboxActive
         isAutoClickerActive = not isAutoClickerActive
         teleportEnabled = not teleportEnabled
         toggleTeleport()
-
-        -- Activate or deactivate hitbox
-        if isHitboxActive then
-            task.spawn(hitbox)
-        else
-            resetHitboxSizes() -- Reset sizes when turned off
-        end
+		
 
         -- Activate or deactivate auto clicker
         if isAutoClickerActive then
@@ -641,8 +632,14 @@ Tabs.keybinds:AddKeybind("Keybind", {
         if teleportEnabled then
             spawn(teleportLoop)
         end
+		        if isHitboxActive then
+            deactivateHitbox()
+        else
+            activateHitbox()
+        end
     end
 })
+
 
 
 
