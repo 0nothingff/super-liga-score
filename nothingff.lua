@@ -649,9 +649,9 @@ Tabs.keybinds:AddKeybind("Keybind", {
 --ball track
 local function checkAndSetTackleHitboxSize(hitbox)
     -- Sprawdzamy, czy rozmiar hitboxu nie jest już równy (10, 38, 6)
-    if hitbox.Size ~= Vector3.new(45, 45, 45) then
+    if hitbox.Size ~= Vector3.new(45, 6, 45) then
         -- Jeśli rozmiar jest inny, ustawiamy go na (10, 38, 6)
-        hitbox.Size = Vector3.new(45, 45, 45)
+        hitbox.Size = Vector3.new(45, 6, 45)
     end
 end
 -- Funkcja do obsługi postaci gracza
