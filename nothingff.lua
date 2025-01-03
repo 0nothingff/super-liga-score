@@ -1,3 +1,4 @@
+warn "-"
 wait ("1")
 
 local player = game.Players.LocalPlayer
