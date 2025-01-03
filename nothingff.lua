@@ -1,6 +1,6 @@
 print ("~~")
 
-wait ("0.8")
+wait ("1")
 
 warn ("~~")
 local player = game.Players.LocalPlayer
