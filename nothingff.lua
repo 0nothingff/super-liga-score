@@ -1114,13 +1114,19 @@ local function UpdatePlayerList()
     table.insert(PlayerList, 1, LocalPlayer.Name)
     -- Add "none" option at the bottom of the list
     table.insert(PlayerList, "none")
+
+    -- Refresh the dropdown with the updated player list
+    if PlayerDropdown then
+        PlayerDropdown:SetValues(PlayerList)
+    end
+
     return PlayerList
 end
 
 -- Create dropdown for selecting player
 PlayerDropdown = Tabs.tab1:AddDropdown("Dropdown", {
     Title = "Select Player",
-    Values = UpdatePlayerList(),  -- Corrected here to call UpdatePlayerList() before passing it
+    Values = UpdatePlayerList(),  -- Call UpdatePlayerList() to get initial values
     Multi = false,
     Default = "none",
     Callback = function(value)
@@ -1160,25 +1166,18 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
-spawn(function()
-    while true do
-        wait(0.2)
-        UpdatePlayerList()
-    end
-end)
+-- Update the player list when players join or leave
+Players.PlayerAdded:Connect(UpdatePlayerList)
+Players.PlayerRemoving:Connect(UpdatePlayerList)
 
-
-
-    Tabs.tab1:AddButton({
-        Title = "Refresh Player List",
-        Description = "",
+-- Add button to manually refresh the player list
+Tabs.tab1:AddButton({
+    Title = "Refresh Player List",
+    Description = "",
     Callback = function()
         UpdatePlayerList()
     end
 })
--- Update the player list when players join or leave
-Players.PlayerAdded:Connect(UpdatePlayerList)
-Players.PlayerRemoving:Connect(UpdatePlayerList)
 
 
 
