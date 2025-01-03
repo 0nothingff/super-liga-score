@@ -108,9 +108,9 @@ local Window = Fluent:CreateWindow({
     Title = "Super League Soccer!",
     SubTitle = "nothing",
     TabWidth = 150,
-    Size = UDim2.fromOffset(550, 450),
+    Size = UDim2.fromOffset(500, 300),
     Acrylic = false,
-    Theme = "Light",
+    Theme = "Darker",
     MinimizeKey = Enum.KeyCode.LeftAlt
 })
 
@@ -1199,17 +1199,7 @@ SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
 Fluent:Notify({
-    Title = "",
-    Content = "🙃",
-    Duration = 1
-})
-Fluent:Notify({
-    Title = "",
-    Content = "🙃🙃",
-    Duration = 2
-})
-Fluent:Notify({
-    Title = "",
-    Content = "🙃🙃🙃",
-    Duration = 3
+    Title = "nothing",
+    Content = "if  MinimizeKey set LeftControl change Leftalt",
+    Duration = 12
 })
