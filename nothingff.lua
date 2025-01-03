@@ -1163,6 +1163,22 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
+spawn(function()
+    while true do
+        wait(0.2)
+        UpdatePlayerList()
+    end
+end)
+
+
+
+    Tabs.tab1:AddButton({
+        Title = "Refresh Player List",
+        Description = "",
+    Callback = function()
+        UpdatePlayerList()
+    end
+})
 -- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
