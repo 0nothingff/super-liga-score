@@ -1156,7 +1156,6 @@ local function TeleportFootballToPlayer()
     end
 end
 
--- Add keybind to teleport football
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "TP ball to Player",
     Mode = "Toggle",
@@ -1165,6 +1164,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
         TeleportFootballToPlayer()
     end,
 })
+
 
 -- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
