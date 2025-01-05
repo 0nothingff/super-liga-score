@@ -1,5 +1,5 @@
 warn "-"
-wait ("1")
+wait ("3")
 
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -95,7 +95,7 @@ setGradient(energyBars:FindFirstChild("Power"), Color3.new(0, 0, 0), Color3.new(
 setGradient(energyBars:FindFirstChild("Stamina"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to White
 
 
-wait ("1")
+
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
