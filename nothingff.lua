@@ -15,7 +15,7 @@ end
 -- Referencje do GameGui
 local gameGui = playerGui:FindFirstChild("GameGui")
 if not gameGui then
-    warn("join game Super League Soccer!")
+    warn("join game Super League Soccer")
     return
 end
 
@@ -39,29 +39,42 @@ local function deleteElements(parent, names)
     end
 end
 
--- Usuwanie podstawowych elementów GUI
-deleteElements(gameGui, {"Transition", "KeyHints"})
-
--- Usuwanie PartyLeader w pętli
-local party = gameGui:FindFirstChild("Party")
-if party then
-    local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
-    if members then
-        for _, button in ipairs(members:GetChildren()) do
-            if button.Name == "CircleButton" and button:FindFirstChild("Background") then
-                local partyLeader = button.Background:FindFirstChild("PartyLeader")
-                if partyLeader then
-                    partyLeader:Destroy()
-                    break -- Usuwamy tylko pierwszego lidera
+-- Funkcja do usuwania PartyLeader
+local function deletePartyLeaders()
+    local party = gameGui:FindFirstChild("Party")
+    if party then
+        local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
+        if members then
+            for _, button in ipairs(members:GetChildren()) do
+                if button.Name == "CircleButton" and button:FindFirstChild("Background") then
+                    local partyLeader = button.Background:FindFirstChild("PartyLeader")
+                    if partyLeader then
+                        partyLeader:Destroy()
+                        return true -- Zwraca true, jeśli element został usunięty
+                    end
                 end
             end
         end
-    else
-        print("-")
     end
-else
-    print("-")
+    return false -- Zwraca false, jeśli nie było co usuwać
 end
+
+-- Monitorowanie elementów do usunięcia
+local function monitorGUI()
+    -- Spróbuj usunąć podstawowe elementy
+    deleteElements(gameGui, {"Transition", "KeyHints"})
+
+    -- Usuń PartyLeader, jeśli istnieje
+    local deleted = deletePartyLeaders()
+
+    -- Jeśli coś zostało usunięte, spróbuj ponownie po krótkim czasie
+    if deleted then
+        task.defer(monitorGUI) -- Odroczona ponowna próba usunięcia
+    end
+end
+
+-- Uruchom proces monitorowania
+monitorGUI()
 
 
 -- Referencje do MatchHUD i EnergyBars
