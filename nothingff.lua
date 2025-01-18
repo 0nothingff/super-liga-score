@@ -574,7 +574,7 @@ local function toggleTeleport()
                         end
                     end
                 end
-                task.wait(0.01)
+                task.wait(0.3)
             end
         end)
     end
