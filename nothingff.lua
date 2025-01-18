@@ -1,8 +1,7 @@
 warn "+"
 wait ("5")
-warn "++"
-warn "+++"
-warn "++++"
+warn "+"
+
 
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -353,8 +352,7 @@ local function boostSpeed(character)
             bodyVelocity:Destroy()
         end
 
-        -- Reset boost availability
-        wait(1)
+        wait (0.75)
         boostActive = false
     end
 end
