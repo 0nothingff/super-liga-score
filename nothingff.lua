@@ -102,7 +102,7 @@ local Tabs = {
         Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
         emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
         tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
-	    tab5 = Window:AddTab({ Title = "Colors", Icon = "play" })
+	    tab5 = Window:AddTab({ Title = "Colors", Icon = "play" }),
 		    keybinds = Window:AddTab({ Title = "keybinds", Icon = "play" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
