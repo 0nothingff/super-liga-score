@@ -77,37 +77,6 @@ end
 monitorGUI()
 
 
--- Referencje do MatchHUD i EnergyBars
-local matchHUD = gameGui:FindFirstChild("MatchHUD")
-local energyBars = matchHUD and matchHUD:FindFirstChild("EngergyBars")
-
-if not (matchHUD and energyBars) then
-    print("-")
-    return
-end
-
--- Funkcja do ustawiania gradientu
-local function setGradient(frame, startColor, endColor)
-    if frame then
-        local progressBar = frame:FindFirstChild("ProgressBar")
-        if progressBar then
-            local existingGradient = progressBar:FindFirstChild("UIGradient")
-            if existingGradient then
-                existingGradient:Destroy()
-            end
-            local newGradient = Instance.new("UIGradient")
-            newGradient.Color = ColorSequence.new(startColor, endColor)
-            newGradient.Rotation = 90
-            newGradient.Parent = progressBar
-        else
-            print("-")
-        end
-    end
-end
-
--- Ustawienie gradientu dla Power i Stamina
-setGradient(energyBars:FindFirstChild("Power"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to Red
-setGradient(energyBars:FindFirstChild("Stamina"), Color3.new(0, 0, 0), Color3.new(255, 0, 0)) -- Black to White
 
 
 
@@ -133,6 +102,7 @@ local Tabs = {
         Main = Window:AddTab({ Title = "Football Controls", Icon = "play" }),
         emote = Window:AddTab({ Title = "Emotes", Icon = "play" }),
         tab1 = Window:AddTab({ Title = "tp ball for player", Icon = "play" }),
+	    tab5 = Window:AddTab({ Title = "Colors", Icon = "play" })
 		    keybinds = Window:AddTab({ Title = "keybinds", Icon = "play" }),
         Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
 }
@@ -430,7 +400,95 @@ Tabs.keybinds:AddKeybind("Keybind", {
         movePartsToPlayer()
     end,
 })
+--colors
+-- Referencje do MatchHUD i EnergyBars
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local gameGui = playerGui:FindFirstChild("GameGui")
 
+local matchHUD = gameGui and gameGui:FindFirstChild("MatchHUD")
+local energyBars = matchHUD and matchHUD:FindFirstChild("EngergyBars")
+
+if not (matchHUD and energyBars) then
+    return
+end
+
+-- Funkcja do ustawiania gradientu
+local function setGradient(frame, startColor, endColor)
+    if frame then
+        local progressBar = frame:FindFirstChild("ProgressBar")
+        if progressBar then
+            local existingGradient = progressBar:FindFirstChild("UIGradient")
+            if existingGradient then
+                existingGradient:Destroy()
+            end
+            local newGradient = Instance.new("UIGradient")
+            newGradient.Color = ColorSequence.new(startColor, endColor)
+            newGradient.Rotation = 90
+            newGradient.Parent = progressBar
+        else
+
+        end
+    end
+end
+
+-- Domyślne kolory
+local powerLeftColor = Color3.fromRGB(0, 0, 0)
+local powerRightColor = Color3.fromRGB(255, 0, 0)
+local staminaLeftColor = Color3.fromRGB(0, 0, 0)
+local staminaRightColor = Color3.fromRGB(0, 255, 0)
+
+-- Colorpicker dla Stamina Left
+local staminaLeftPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
+    Title = "Stamina Left",
+    Default = staminaLeftColor
+})
+
+staminaLeftPicker:OnChanged(function(color)
+    staminaLeftColor = color
+end)
+
+-- Colorpicker dla Stamina Right
+local staminaRightPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
+    Title = "Stamina Right",
+    Default = staminaRightColor
+})
+
+staminaRightPicker:OnChanged(function(color)
+    staminaRightColor = color
+end)
+
+-- Colorpicker dla Power Left
+local powerLeftPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
+    Title = "Power Left",
+    Default = powerLeftColor
+})
+
+powerLeftPicker:OnChanged(function(color)
+    powerLeftColor = color
+end)
+
+-- Colorpicker dla Power Right
+local powerRightPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
+    Title = "Power Right",
+    Default = powerRightColor
+})
+
+powerRightPicker:OnChanged(function(color)
+    powerRightColor = color
+end)
+
+-- Funkcja do aktualizacji kolorów
+local function updateColors()
+    setGradient(energyBars:FindFirstChild("Power"), powerLeftColor, powerRightColor)
+    setGradient(energyBars:FindFirstChild("Stamina"), staminaLeftColor, staminaRightColor)
+
+    -- Wywołanie ponowne po 2 sekundach
+    task.delay(2, updateColors)
+end
+
+-- Uruchomienie pierwszej aktualizacji
+updateColors()
 
 
 -- Variables for toggle states
