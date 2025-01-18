@@ -440,7 +440,7 @@ local staminaRightColor = Color3.fromRGB(255, 0, 0)
 
 -- Colorpicker dla Stamina Left
 local staminaLeftPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
-    Title = "Stamina Down",
+    Title = "Stamina Up",
     Default = staminaLeftColor
 })
 
@@ -450,7 +450,7 @@ end)
 
 -- Colorpicker dla Stamina Right
 local staminaRightPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
-    Title = "Stamina Up",
+    Title = "Stamina Down",
     Default = staminaRightColor
 })
 
@@ -460,7 +460,7 @@ end)
 
 -- Colorpicker dla Power Left
 local powerLeftPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
-    Title = "Power Down",
+    Title = "Power Up",
     Default = powerLeftColor
 })
 
@@ -470,7 +470,7 @@ end)
 
 -- Colorpicker dla Power Right
 local powerRightPicker = Tabs.tab5:AddColorpicker("Colorpicker", {
-    Title = "Power Up",
+    Title = "Power Down",
     Default = powerRightColor
 })
 
