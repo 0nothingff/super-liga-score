@@ -592,7 +592,7 @@ local function teleportLoop()
                 rootPart.CFrame = Home
             end
         end
-        wait(0.4) -- 0.4 sekundy przerwy
+        wait(0) -- 0.4 sekundy przerwy
     end
 end
 player.CharacterAdded:Connect(function(newCharacter)
@@ -636,7 +636,7 @@ end
 local function loop()
     while loopEnabled do
         movePartsToPlayer()
-        task.wait(0.3) -- Delay in seconds
+        task.wait(0) -- Delay in seconds
     end
 end
 
