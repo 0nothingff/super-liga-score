@@ -1,4 +1,7 @@
 
+warn "+"
+wait "20"
+warn "+"
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
