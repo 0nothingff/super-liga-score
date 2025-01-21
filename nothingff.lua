@@ -1,6 +1,4 @@
 
-
-
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -13,8 +11,10 @@ end
 -- Referencje do GameGui
 local gameGui = playerGui:FindFirstChild("GameGui")
 if not gameGui then
-    warn("join game Super League Soccer")
-    return
+    while true do
+        warn("-")
+        task.wait(0.5) -- Krótkie opóźnienie, aby uniknąć przeciążenia konsoli
+    end
 end
 
 -- Funkcja do rekurencyjnego znajdowania dzieci
@@ -59,20 +59,25 @@ end
 
 -- Monitorowanie elementów do usunięcia
 local function monitorGUI()
-    -- Spróbuj usunąć podstawowe elementy
-    deleteElements(gameGui, {"Transition", "KeyHints"})
+    while true do
+        -- Spróbuj usunąć podstawowe elementy
+        deleteElements(gameGui, {"Transition", "KeyHints"})
 
-    -- Usuń PartyLeader, jeśli istnieje
-    local deleted = deletePartyLeaders()
+        -- Usuń PartyLeader, jeśli istnieje
+        local deleted = deletePartyLeaders()
 
-    -- Jeśli coś zostało usunięte, spróbuj ponownie po krótkim czasie
-    if deleted then
-        task.defer(monitorGUI) -- Odroczona ponowna próba usunięcia
+        -- Jeśli coś zostało usunięte, kontynuuj pętlę
+        if deleted then
+            task.wait(0.1) -- Odroczona ponowna próba usunięcia
+        else
+            break -- Przerwij, jeśli nie ma nic do usunięcia
+        end
     end
 end
 
 -- Uruchom proces monitorowania
 monitorGUI()
+
 
 
 
