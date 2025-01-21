@@ -1,6 +1,4 @@
-warn "+"
-wait ("5")
-warn "+"
+
 
 
 local player = game.Players.LocalPlayer
