@@ -1270,8 +1270,4 @@ InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
-Fluent:Notify({
-    Title = "nothing",
-    Content = "if  MinimizeKey set LeftControl change Leftalt",
-    Duration = 12
-})
+
