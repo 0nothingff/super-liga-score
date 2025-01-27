@@ -1,7 +1,7 @@
-warn "-------------------"
-warn "dc-nothingff"
-warn "rbx-testing123757v4"
-warn "-------------------"
+warn "-----------------------"
+warn "discord-nothingff"
+warn "roblox-testing123757v4"
+warn "-----------------------"
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -91,12 +91,11 @@ local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
--- Create window
 local Window = Fluent:CreateWindow({
     Title = "Super League Soccer!",
-    SubTitle = "nothing",
+    SubTitle = "nothingff",
     TabWidth = 150,
-    Size = UDim2.fromOffset(500, 300),
+    Size = UDim2.fromOffset(488, 318),
     Acrylic = false,
     Theme = "Darker",
     MinimizeKey = Enum.KeyCode.LeftAlt
