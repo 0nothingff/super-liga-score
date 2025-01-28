@@ -1169,7 +1169,38 @@ Tabs.all:AddKeybind("Keybind", {
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
 
--- Add button to manually refresh the player list
+-- Add a paragraph
+Tabs.all:AddParagraph({
+    Title = "Jump Power Settings",
+    Content = "",
+})
+
+-- Variable to store the selected jump power
+local selectedJumpPower = 50
+
+-- Add a slider for jump power
+local Sliderjump = Tabs.all:AddSlider("Sliderjump", {
+    Title = "Jump Power",
+    Description = "",
+    Default = 50, -- Default jump power
+    Min = 50, -- Minimum jump power
+    Max = 150, -- Maximum jump power
+    Rounding = 0.1,
+    Callback = function(Value)
+        selectedJumpPower = Value 
+    end
+})
+
+-- Loop to apply jump power consistently
+task.spawn(function()
+    while task.wait(0.1) do
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = selectedJumpPower
+        end
+    end
+end)
+
 
     Tabs.all:AddParagraph({
         Title = "colors",
