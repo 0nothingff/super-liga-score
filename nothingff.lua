@@ -1358,12 +1358,11 @@ updateColors()
 
 
 
-SaveManager:SetLibrary(Fluent)
 InterfaceManager:SetLibrary(Fluent)
 SaveManager:IgnoreThemeSettings()
 SaveManager:SetIgnoreIndexes({})
 InterfaceManager:SetFolder("nothing")
-SaveManager:SetFolder("nothing/super-score-liga")
+SaveManager:SetFolder("nothing/T")
 InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
