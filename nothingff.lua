@@ -1279,9 +1279,9 @@ end
 
 -- Domyślne kolory
 local powerLeftColor = Color3.fromRGB(0, 0, 0)
-local powerRightColor = Color3.fromRGB(255, 0, 0)
+local powerRightColor = Color3.fromRGB(255, 255, 255)
 local staminaLeftColor = Color3.fromRGB(0, 0, 0)
-local staminaRightColor = Color3.fromRGB(255, 0, 0)
+local staminaRightColor = Color3.fromRGB(255, 255, 255)
 
 -- Colorpicker dla Stamina Left
 local staminaLeftPicker = Tabs.all:AddColorpicker("Colorpicker", {
