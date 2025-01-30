@@ -822,13 +822,13 @@ local InputZ = Tabs.all:AddInput("InputZ", {
 local TransparencySlider = Tabs.all:AddSlider("TransparencySlider", { 
     Title = "Transparency", 
     Description = "",
-    Default = 10,  -- Default slider value is 1, which maps to 0.1
-    Min = 1,      -- Minimum value of 1 (which maps to 0.1 transparency)
-    Max = 10,     -- Maximum value of 10 (which maps to 1 transparency)
-    Rounding = 1, 
+    Default = 1,  -- Default slider value is 1, which maps to 0.1
+    Min = 0,      -- Minimum value of 1 (which maps to 0.1 transparency)
+    Max = 1,     -- Maximum value of 10 (which maps to 1 transparency)
+    Rounding = 1.1, 
     Callback = function(Value)
         -- Scale the value from 1-10 to 0.1-1
-        hitboxTransparency = Value * 0.1
+        hitboxTransparency = Value
         if isHitboxActive then
             updateRealHitbox()  -- Update transparency of the real hitbox part only if toggle is ON
         end
