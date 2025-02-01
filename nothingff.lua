@@ -571,6 +571,48 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
+-- Assuming the script is placed inside a LocalScript
+
+local player = game.Players.LocalPlayer
+local userInputService = game:GetService("UserInputService")
+local football = workspace.Junk.Football
+
+-- Function to find the nearest player on the same team (including the local player)
+local function getNearestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = math.huge  -- Start with a very large number (no limit)
+
+    for _, otherPlayer in pairs(game.Players:GetPlayers()) do
+        -- Check if the player is on the same team and has a character
+        if otherPlayer.Team == player.Team and otherPlayer.Character and otherPlayer.Character.PrimaryPart then
+            local distance = (otherPlayer.Character.PrimaryPart.Position - football.Position).magnitude
+            if distance < shortestDistance then
+                closestPlayer = otherPlayer
+                shortestDistance = distance
+            end
+        end
+    end
+
+    return closestPlayer
+end
+
+-- Function to teleport the football to the nearest player (including the local player)
+local function teleportFootballToNearestPlayer()
+    local nearestPlayer = getNearestPlayer()
+    if nearestPlayer then
+        football.CFrame = nearestPlayer.Character.PrimaryPart.CFrame
+    end
+end
+
+-- Adding the keybind for the teleportation action
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "tp close player your team", 
+    Mode = "Toggle",
+    Default = "Y",  -- Default key for the keybind
+    Callback = function()
+        teleportFootballToNearestPlayer()
+    end,
+})
 
 
 
