@@ -349,7 +349,7 @@ local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to trac
 local isAutoFollowActive = false
 local autoClickingJust = false
 local footballs = {} -- List of footballs to track
-local clickInterval = 0.1 -- Interval between clicks (in seconds)
+local clickInterval = 0.001 -- Interval between clicks (in seconds)
 
 -- Combined function: Teleport, follow, and auto-click
 local function teleportAndAutoFollow()
