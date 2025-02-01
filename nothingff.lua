@@ -545,6 +545,32 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
+-- Obiekt Football w folderze Junk w workspace
+local football = workspace.Junk.Football
+local tpPosition = Vector3.new(-0.000156402588, -0.817444026, 0.000289689749)  -- Współrzędne teleportacji
+local tpTime = 5  -- Czas trwania teleportacji (5 sekund)
+local isTeleporting = false  -- Zmienna sprawdzająca stan teleportacji
+
+-- Funkcja teleportacji
+local function teleportFootball()
+    if not isTeleporting then
+        isTeleporting = true
+        football.CFrame = CFrame.new(tpPosition)  -- Teleportowanie Football na nowe współrzędne
+        wait(tpTime)  -- Czekaj 5 sekund
+        isTeleporting = false  -- Wyłącz teleportację
+    end
+end
+
+-- Dodanie keybindu z toggle mode
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "stuck ball",
+    Mode = "Toggle",
+    Default = "H",  -- Domyślny klawisz H
+    Callback = function()
+        teleportFootball()  -- Wywołanie teleportacji po naciśnięciu klawisza
+    end,
+})
+
 
 
 
