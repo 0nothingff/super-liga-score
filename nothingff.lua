@@ -621,72 +621,6 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 
 
-local player = game.Players.LocalPlayer
-local userInputService = game:GetService("UserInputService")
-local isLevitating = false -- Flaga do kontrolowania lewitacji
-local levitationTasks = {} -- Lista zadań lewitacji dla piłek
-
--- Funkcja do lewitacji piłki
-local function levitateFootball(football)
-    local amplitude = 2 -- Wysokość unoszenia
-    local speed = 1.5 -- Szybkość unoszenia
-    local rotationSpeed = 2 -- Szybkość obrotu piłki
-    local smoothness = 0.1 -- Płynność animacji
-
-    local levitationTask = task.spawn(function()
-        while isLevitating do
-            local playerPosition = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
-            if playerPosition then
-                -- Obliczenie kąta, w którym patrzy gracz
-                local lookDirection = player.Character.HumanoidRootPart.CFrame.LookVector
-                local offset = lookDirection * -5 + Vector3.new(0, math.sin(tick() * speed) * amplitude, 0) -- Piłka podąża za graczem w kierunku patrzenia
-                local targetPosition = playerPosition.Position + offset
-
-                -- Płynne przejście piłki w nową pozycję
-                football.Position = football.Position:Lerp(targetPosition, smoothness)
-
-                -- Obrót piłki wokół własnej osi
-                football.CFrame = football.CFrame * CFrame.Angles(0, math.rad(rotationSpeed), 0)
-            end
-            task.wait(0.03) -- Częstotliwość dla płynności
-        end
-    end)
-    table.insert(levitationTasks, levitationTask) -- Dodanie zadania do listy
-end
-
--- Funkcja zatrzymująca lewitację
-local function stopLevitation()
-    isLevitating = false
-    -- Zatrzymanie wszystkich zadań lewitacji
-    for _, task in ipairs(levitationTasks) do
-        task.cancel()
-    end
-    levitationTasks = {} -- Czyścimy listę zadań
-end
-
--- Zmiana z klawisza "H" na system keybindów
-Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "Follow Ball",
-    Mode = "Toggle",
-    Default = "Y", -- Domyślny klawisz: Y
-    Callback = function()
-        if isLevitating then
-            stopLevitation()
-        else
-            isLevitating = true
-            -- Lewitacja dla wszystkich piłek w folderze "Junk"
-            local junkFolder = game.Workspace:FindFirstChild("Junk")
-            if junkFolder then
-                -- Lewitacja dla wszystkich piłek w folderze "Junk"
-                for _, obj in pairs(junkFolder:GetChildren()) do
-                    if obj:IsA("BasePart") and obj.Name == "Football" then
-                        levitateFootball(obj) -- Aktywujemy lewitację dla piłki
-                    end
-                end
-            end
-        end
-    end,
-})
 
 
 
@@ -1222,7 +1156,7 @@ local Sliderjump = Tabs.all:AddSlider("Sliderjump", {
     Description = "",
     Default = 50, -- Default jump power
     Min = 50, -- Minimum jump power
-    Max = 170, -- Maximum jump power
+    Max = 160, -- Maximum jump power
     Rounding = 0.040,
     Callback = function(Value)
         selectedJumpPower = Value 
