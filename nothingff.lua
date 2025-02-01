@@ -1,4 +1,4 @@
-warn "-----------------------"
+warn "-+"
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -1281,4 +1281,4 @@ InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
-warn "+++++++++++++++++++++++"
+warn "+-"
