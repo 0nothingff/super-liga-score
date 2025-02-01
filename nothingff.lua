@@ -288,7 +288,6 @@ end
 local function checkAndTeleportFootball()
     local team = player.Team
     if team then
-        warn("🙃", team.Name)
         if team.Name == "Home" then
             teleportObject(football, homePosition)
         elseif team.Name == "Away" then
