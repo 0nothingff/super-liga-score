@@ -548,7 +548,7 @@ Tabs.keybinds:AddKeybind("Keybind", {
 -- Obiekt Football w folderze Junk w workspace
 local football = workspace.Junk.Football
 local tpPosition = Vector3.new(-0.000156402588, -0.817444026, 0.000289689749)  -- Współrzędne teleportacji
-local tpTime = 5  -- Czas trwania teleportacji (5 sekund)
+local tpTime = 10  -- Czas trwania teleportacji (5 sekund)
 local isTeleporting = false  -- Zmienna sprawdzająca stan teleportacji
 
 -- Funkcja teleportacji
