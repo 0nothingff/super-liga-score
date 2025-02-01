@@ -1006,41 +1006,42 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local SelectedPlayer = nil
 local PlayerDropdown = nil
+local LoopEnabled = false
+local NormalMode = true -- Add a state for normal mode
 
 -- Function to update player list
 local function UpdatePlayerList()
     local PlayerList = {}
-    -- Add all players except the LocalPlayer to the list
     for _, player in ipairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
             table.insert(PlayerList, player.Name)
         end
     end
-    -- Add LocalPlayer at the top of the list
     table.insert(PlayerList, 1, LocalPlayer.Name)
-    -- Add "none" option at the bottom of the list
-    table.insert(PlayerList, "none")
-
-    -- Refresh the dropdown with the updated player list
+    table.insert(PlayerList, "none") -- To reset player selection
     if PlayerDropdown then
         PlayerDropdown:SetValues(PlayerList)
     end
-
+    
+    -- If selected player leaves, reset to "none"
+    if SelectedPlayer and not Players:FindFirstChild(SelectedPlayer.Name) then
+        SelectedPlayer = nil
+        PlayerDropdown:SetValue("none")
+    end
+    
     return PlayerList
 end
 
 -- Create dropdown for selecting player
 PlayerDropdown = Tabs.all:AddDropdown("Dropdown", {
     Title = "Select Player",
-    Values = UpdatePlayerList(),  -- Call UpdatePlayerList() to get initial values
+    Values = UpdatePlayerList(),
     Multi = false,
     Default = "none",
     Callback = function(value)
         if value and value ~= "none" then
-            -- Set SelectedPlayer to the player if one is selected
             SelectedPlayer = Players:FindFirstChild(value)
         else
-            -- Set SelectedPlayer to nil when "none" is selected (do nothing)
             SelectedPlayer = nil
         end
     end
@@ -1049,38 +1050,52 @@ PlayerDropdown = Tabs.all:AddDropdown("Dropdown", {
 -- Function to teleport football to the selected player
 local function TeleportFootballToPlayer()
     local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
-    if football then
-        if SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            -- If a player is selected, teleport football to their position
-            football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
-        elseif SelectedPlayer == nil then
-            -- If "none" is selected, do nothing (football stays where it is)
-            -- Alternatively, you could set the football to a default position (like LocalPlayer's position)
-            -- but in this case we do nothing if "none" is selected
-            return
-        end
+    if football and SelectedPlayer and SelectedPlayer.Character and SelectedPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        football.CFrame = SelectedPlayer.Character.HumanoidRootPart.CFrame
     end
 end
-Tabs.all:AddButton({
-    Title = "Refresh Player List",
-    Description = "",
-    Callback = function()
-        UpdatePlayerList()
-    end
-})
-Tabs.all:AddKeybind("Keybind", {
-    Title = "TP ball to Player",
-    Mode = "Toggle",
-    Default = "Three", -- Change this key if needed
-    Callback = function()
-        TeleportFootballToPlayer()
-    end,
+
+-- Toggle mode (Normal / Loop) using a Toggle button
+local Toggle = Tabs.all:AddToggle("modetog", {
+    Title = "Normal/Loop",
+    Default = false, -- Default is Loop mode
 })
 
+-- When toggle state changes
+Toggle:OnChanged(function(state)
+    NormalMode = not state -- If toggle is on (Loop mode), switch to Loop mode; else Normal mode
+end)
+
+-- Keybind for teleporting ball in Normal Mode or toggling the loop in Loop Mode
+Tabs.all:AddKeybind("Keybind", {
+    Title = "TP Ball Mode",
+    Mode = "Toggle",
+    Default = "Four", 
+    Callback = function()
+        if NormalMode then
+            -- Normal Mode: Teleport ball to selected player once
+            TeleportFootballToPlayer()
+        else
+            -- Loop Mode: Toggle the loop on and off
+            LoopEnabled = not LoopEnabled
+            if LoopEnabled then
+                -- Start the loop if it was toggled on
+                while LoopEnabled do
+                    TeleportFootballToPlayer()
+                    wait() -- Check the loop state more frequently
+                end
+            end
+        end
+    end,
+})
 
 -- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
+
+
+
+
 
 -- Add a paragraph
 Tabs.all:AddParagraph({
