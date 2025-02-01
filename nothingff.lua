@@ -1,7 +1,4 @@
 warn "-----------------------"
-warn "discord-nothingff"
-warn "roblox-testing123757v4"
-warn "-----------------------"
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -93,7 +90,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 local Window = Fluent:CreateWindow({
     Title = "Super League Soccer!",
-    SubTitle = "nothingff",
+    SubTitle = "dc-nothingff|rbx-testing123757v4",
     TabWidth = 150,
     Size = UDim2.fromOffset(488, 318),
     Acrylic = false,
@@ -1284,3 +1281,4 @@ InterfaceManager:BuildInterfaceSection(Tabs.Settings)
 SaveManager:BuildConfigSection(Tabs.Settings)
 Window:SelectTab(1)
 SaveManager:LoadAutoloadConfig()
+warn "+++++++++++++++++++++++"
