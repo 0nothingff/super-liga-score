@@ -110,66 +110,38 @@ local isTeleportingEnabled = false
 local isAutoClickerActive = false
 local teleportEnabled = false
 local loopEnabled = false
-local isAutoKickEnabled = false -- Added variable to control auto kick functionality
+local isAutoKickEnabled = false
+local isHitboxActive = false
 
--- Ustawienia pozycji
-local Home = CFrame.new(0.283999115, 4.0250001, -20.9191837) -- Pozycja Away
-local Away = CFrame.new(0.271869421, 4.0250001, 20.0689564) -- Pozycja Home
+-- Position settings
+local Home = CFrame.new(0.283999115, 4.0250001, -20.9191837)
+local Away = CFrame.new(0.271869421, 4.0250001, 20.0689564)
 
+-- Default hitbox size
+local defaultHitboxSize = Vector3.new(4.52, 5.72, 2.39)
 
-local defaultHitboxSize = Vector3.new(4.521276473999023, 5.7297587394714355, 2.397878408432007)
-
+-- Services & Player Variables
 local player = game.Players.LocalPlayer
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 local VirtualInputManager = game:GetService("VirtualInputManager")
+local Workspace = game:GetService("Workspace")
 local character = player.Character or player.CharacterAdded:Wait()
 
--- Variables for toggle states
-local isHitboxActive = false
-local loopActive = false
-
 -- Hitbox Function
-local function manageHitboxSize(hitbox)
-    while isHitboxActive and loopActive do
-        hitbox.Size = Vector3.new(222, 70, 418) -- Dynamic size in loop
-        task.wait(0.1) -- Adjust interval as needed
-    end
-end
-
-local function activateHitbox()
-    if isHitboxActive then return end
-    isHitboxActive = true
+local function toggleHitbox()
+    isHitboxActive = not isHitboxActive
 
     local function onCharacterAddedHitbox(character)
         local hitbox = character:WaitForChild("Hitbox", 5)
         if hitbox then
-            loopActive = true
-            task.spawn(function()
-                manageHitboxSize(hitbox)
-            end)
+            hitbox.Size = isHitboxActive and Vector3.new(222, 70, 418) or defaultHitboxSize
         end
     end
 
     player.CharacterAdded:Connect(onCharacterAddedHitbox)
 
-    -- Apply to current character if exists
     if player.Character then
         onCharacterAddedHitbox(player.Character)
-    end
-end
-
-local function deactivateHitbox()
-    if not isHitboxActive then return end
-    isHitboxActive = false
-    loopActive = false
-
-    -- Reset hitbox size to default once
-    if player.Character then
-        local hitbox = player.Character:FindFirstChild("Hitbox")
-        if hitbox then
-            hitbox.Size = defaultHitboxSize
-        end
     end
 end
 
@@ -177,11 +149,13 @@ end
 local function toggleTeleport()
     isTeleportingEnabled = not isTeleportingEnabled
     if isTeleportingEnabled then
-        task.spawn(function()
+        task.defer(function()
             while isTeleportingEnabled do
-                local team = player.Team
-                if team then
-                    local position = team.Name == "Home" and Vector3.new(-14.130847, 4.00001049, -188.18988) or Vector3.new(14.0604515, 4.00001144, 187.836166)
+                if player.Team then
+                    local position = player.Team.Name == "Home" 
+                        and Vector3.new(-14.13, 4, -188.18) 
+                        or Vector3.new(14.06, 4, 187.83)
+
                     for _, obj in ipairs(workspace.Junk:GetChildren()) do
                         if obj:IsA("BasePart") then
                             obj.CFrame = CFrame.new(position)
@@ -194,54 +168,44 @@ local function toggleTeleport()
     end
 end
 
+-- Teleport Loop
 local function teleportLoop()
     while teleportEnabled do
-        if character and character:FindFirstChild("HumanoidRootPart") then
-            local rootPart = character.HumanoidRootPart
-            -- Teleportowanie zależne od teamu
-            if player.Team == nil then
-            elseif player.Team.Name == "Away" then
-                rootPart.CFrame = Away
-            elseif player.Team.Name == "Home" then
-                rootPart.CFrame = Home
-            end
+        local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+        if rootPart and player.Team then
+            rootPart.CFrame = player.Team.Name == "Away" and Away or Home
         end
-        wait(0) -- 0.4 sekundy przerwy
+        task.wait()
     end
 end
+
 player.CharacterAdded:Connect(function(newCharacter)
     character = newCharacter
 end)
 
 -- Auto Clicker Function
 local function autoClick()
-    if not isAutoClickerActive then return end
     while isAutoClickerActive do
-        task.wait(0)
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
         VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+        task.wait()
     end
 end
 
 -- Move Parts to Player Function
 local function movePartsToPlayer()
     local junkFolder = Workspace:FindFirstChild("Junk")
-    if not junkFolder or not junkFolder:IsA("Folder") then
-        return
-    end
-
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:FindFirstChild("HumanoidRootPart")
-    if not rootPart then
-        return
-    end
-
-    local playerPosition = rootPart.Position
-    for _, obj in ipairs(junkFolder:GetDescendants()) do
-        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
-            pcall(function()
-                obj.Position = playerPosition
-            end)
+    if junkFolder then
+        local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+        if rootPart then
+            local playerPosition = rootPart.Position
+            for _, obj in ipairs(junkFolder:GetDescendants()) do
+                if obj:IsA("BasePart") and obj.Name:match("kick%d") or obj.Name == "Football" then
+                    pcall(function()
+                        obj.Position = playerPosition
+                    end)
+                end
+            end
         end
     end
 end
@@ -250,79 +214,55 @@ end
 local function loop()
     while loopEnabled do
         movePartsToPlayer()
-        task.wait(0) -- Delay in seconds
+        task.wait()
     end
 end
 
--- Function to press E key
+-- Simulated Key Press for Auto Kick
 local function pressEKey()
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
-    wait(0.1)
+    task.wait(0.1)
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
 end
 
--- Continuously check for the player's model and Ball transparency
-local function continuouslyCheckBallTransparency()
-    while true do
-        if isAutoKickEnabled then
-            if player.Character and player.Character:FindFirstChild("Ball") then
-                local ball = player.Character.Ball
-                if ball.Transparency == 1 then
-                    pressEKey() -- Simulate pressing the "E" key
-                    wait(0.1) -- Delay to simulate key press duration
-                else
-                    wait(0.1) -- Short delay to prevent excessive loop iterations
-                end
-            else
-                warn("Ball or player model not found in Workspace")
-                wait(1) -- Wait for 1 second before rechecking if Ball or player model is not found
-            end
+-- Auto Kick Function
+local function autoKickLoop()
+    while isAutoKickEnabled do
+        local ball = character and character:FindFirstChild("Ball")
+        if ball and ball.Transparency == 1 then
+            pressEKey()
+            task.wait(0.1)
         else
-            wait(1) -- If auto kick is not enabled, wait before checking again
+            task.wait(1)
         end
     end
 end
 
--- Start the continuous checking in a separate coroutine
-coroutine.wrap(continuouslyCheckBallTransparency)()
-
 -- Keybinding using Tabs.keybinds:AddKeybind
 Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "auto gol (not use you gk)", 
+    Title = "Auto Goal (Avoid if GK)", 
     Mode = "Toggle",
-    Default = "T",  -- Default key is "T"
+    Default = "T",
     Callback = function()
-        -- Toggle states
+        -- Toggle features
         isAutoClickerActive = not isAutoClickerActive
         teleportEnabled = not teleportEnabled
-        toggleTeleport()
-		
-
-        -- Activate or deactivate auto clicker
-        if isAutoClickerActive then
-            task.spawn(autoClick)
-        end
-
-        -- Start or stop teleport loop
         loopEnabled = not loopEnabled
-        if loopEnabled then
-            task.spawn(loop)
-        end
-
-        -- Toggle auto kick
         isAutoKickEnabled = not isAutoKickEnabled
-        
-        -- If teleporting is enabled, start the teleport loop
-        if teleportEnabled then
-            spawn(teleportLoop)
-        end
-		        if isHitboxActive then
-            deactivateHitbox()
-        else
-            activateHitbox()
-        end
+        isHitboxActive = not isHitboxActive
+
+        -- Start or stop features
+        if isAutoClickerActive then task.spawn(autoClick) end
+        if teleportEnabled then task.spawn(teleportLoop) end
+        if loopEnabled then task.spawn(loop) end
+        if isAutoKickEnabled then task.spawn(autoKickLoop) end
+
+        -- Toggle teleport & hitbox
+        toggleTeleport()
+        toggleHitbox()
     end
 })
+
     Tabs.all:AddParagraph({
         Title = "Custom Hitbox",
         Content = ""
