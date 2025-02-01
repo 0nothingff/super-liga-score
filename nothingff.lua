@@ -930,35 +930,39 @@ local EmoteIds = {
     ["Wild Dance"] = 16499688823,
 }
 
-local currentAnimTrack = nil -- Track the current animation playing
+local currentAnimTrack = nil -- Przechowuje aktualną animację
+local isEmotePlaying = false -- Czy animacja jest aktualnie włączona?
 
--- Function to play or stop emote based on ID
+-- Funkcja do przełączania emotki ON/OFF
 local function ToggleEmote(emoteId)
     local player = game.Players.LocalPlayer
     if player and player.Character then
         local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
         if humanoid then
-            -- If there's an animation currently playing, stop it
-            if currentAnimTrack and currentAnimTrack.IsPlaying then
+            if isEmotePlaying and currentAnimTrack then
+                -- Jeśli animacja jest włączona, zatrzymaj ją
                 currentAnimTrack:Stop()
                 currentAnimTrack = nil
+                isEmotePlaying = false
             else
-                -- Otherwise, play the new emote
+                -- Jeśli animacja jest wyłączona, uruchom nową
                 local animation = Instance.new("Animation")
                 animation.AnimationId = "rbxassetid://" .. emoteId
                 currentAnimTrack = humanoid:LoadAnimation(animation)
                 currentAnimTrack:Play()
+                isEmotePlaying = true
 
-                -- Optionally, handle emote stopping and re-triggering
+                -- Jeśli animacja się skończy, zmień flagę na OFF
                 currentAnimTrack.Stopped:Connect(function()
-                    currentAnimTrack = nil -- Reset the animation when it stops
+                    isEmotePlaying = false
+                    currentAnimTrack = nil
                 end)
             end
         end
     end
 end
 
--- Dropdown for selecting emote
+-- Dropdown do wybierania emotki
 local Dropdown = Tabs.all:AddDropdown("EmoteDropdown", {
     Title = "Select Emote",
     Values = {
@@ -970,27 +974,27 @@ local Dropdown = Tabs.all:AddDropdown("EmoteDropdown", {
     Multi = false,
     Default = "Backflip",
     Callback = function(value)
-        -- Emote does not play automatically now; it's only triggered by keybind
+        -- Emote nie startuje automatycznie, tylko na przycisk
     end
 })
 
--- Keybind for activating the emote (toggle play/stop)
+-- Keybind do włączania/wyłączania emotki
 local Keybind = Tabs.all:AddKeybind("Keybind", {
-    Title = "Emote play/stop 2x times",
+    Title = "Toggle Emote",
     Mode = "Toggle",
-    Default = "Four", -- Change this to any desired key
-    Callback = function(pressed)
-        if pressed then
-            local selectedEmote = Dropdown and Dropdown.Value
-            if selectedEmote then
-                local emoteId = EmoteIds[selectedEmote]
-                if emoteId then
-                    ToggleEmote(emoteId) -- Toggle the selected emote (play/stop)
-                end
+    Default = "Four", -- Możesz zmienić klawisz
+    Callback = function()
+        local selectedEmote = Dropdown and Dropdown.Value
+        if selectedEmote then
+            local emoteId = EmoteIds[selectedEmote]
+            if emoteId then
+                ToggleEmote(emoteId) -- Przełączanie ON/OFF
             end
         end
     end,
 })
+
+
 
     Tabs.all:AddParagraph({
         Title = "tp ball for player",
