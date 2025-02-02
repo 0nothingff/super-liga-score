@@ -242,7 +242,7 @@ end
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "Auto Goal (Avoid if GK)", 
     Mode = "Toggle",
-    Default = "T",
+    Default = "Y",
     Callback = function()
         -- Toggle features
         isAutoClickerActive = not isAutoClickerActive
@@ -553,7 +553,7 @@ end
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "tp close player your team", 
     Mode = "Toggle",
-    Default = "Y",  -- Default key for the keybind
+    Default = "T",  -- Default key for the keybind
     Callback = function()
         teleportFootballToNearestPlayer()
     end,
