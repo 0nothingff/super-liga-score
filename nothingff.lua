@@ -1,4 +1,41 @@
-warn "- +"
+-- Pobieramy gracza
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Tworzymy ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "X"
+screenGui.Parent = playerGui
+
+-- Tworzymy TextLabel
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = "☠️"
+textLabel.Font = Enum.Font.GothamBold
+textLabel.TextSize = 100
+textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.Size = UDim2.new(1, 0, 1, 0)
+textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+textLabel.Parent = screenGui
+
+-- Dodajemy animację fade-out
+local TweenService = game:GetService("TweenService")
+local tweenInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+
+local goal = {TextTransparency = 1, BackgroundTransparency = 1}
+
+local tween = TweenService:Create(textLabel, tweenInfo, goal)
+
+-- Uruchamiamy animację
+tween:Play()
+
+-- Po zakończeniu animacji, usuwamy obiekt
+tween.Completed:Connect(function()
+    screenGui:Destroy()
+end)
+
+
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
