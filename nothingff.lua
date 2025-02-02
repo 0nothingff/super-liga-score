@@ -9,7 +9,7 @@ screenGui.Parent = playerGui
 
 -- Tworzymy TextLabel
 local textLabel = Instance.new("TextLabel")
-textLabel.Text = "☠️"
+textLabel.Text = "nothing..."
 textLabel.Font = Enum.Font.GothamBold
 textLabel.TextSize = 100
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
