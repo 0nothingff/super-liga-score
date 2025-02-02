@@ -555,6 +555,11 @@ local isTeleporting = false  -- Zmienna sprawdzająca stan teleportacji
 local function teleportFootball()
     if not isTeleporting then
         isTeleporting = true
+        
+        -- Ustawienie prędkości i prędkości kątowej na zero, aby zatrzymać piłkę
+        football.AssemblyLinearVelocity = Vector3.new(0, 0, 0)  -- Zatrzymanie prędkości
+        football.AssemblyAngularVelocity = Vector3.new(0, 0, 0)  -- Zatrzymanie prędkości kątowej
+        
         football.CFrame = CFrame.new(tpPosition)  -- Teleportowanie Football na nowe współrzędne
         wait(tpTime)  -- Czekaj 5 sekund
         isTeleporting = false  -- Wyłącz teleportację
@@ -571,7 +576,6 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
--- Assuming the script is placed inside a LocalScript
 
 local player = game.Players.LocalPlayer
 local userInputService = game:GetService("UserInputService")
