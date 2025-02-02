@@ -338,56 +338,12 @@ player.CharacterAdded:Connect(function()
     updateFootballReference()
 end)
 
--- one i V
 local player = game.Players.LocalPlayer
-local junkFolder = workspace:WaitForChild("Junk") -- Folder with objects to track
 
-
-
--- States
-local isAutoFollowActive = false
+-- Auto-clicker for "just"
+local clickInterval = 0.0001 -- Interval between clicks (in seconds)
 local autoClickingJust = false
-local footballs = {} -- List of footballs to track
-local clickInterval = 0.001 -- Interval between clicks (in seconds)
 
--- Combined function: Teleport, follow, and auto-click
-local function teleportAndAutoFollow()
-    local character = player.Character or player.CharacterAdded:Wait()
-    local rootPart = character:WaitForChild("HumanoidRootPart")
-
-    for _, obj in ipairs(junkFolder:GetChildren()) do
-        if obj:IsA("BasePart") and (obj.Name == "kick1" or obj.Name == "kick2" or obj.Name == "kick3" or obj.Name == "Football") then
-            if not table.find(footballs, obj) then
-                table.insert(footballs, obj)
-            end
-            obj.CFrame = CFrame.new(rootPart.Position)
-        end
-    end
-
-    -- Begin the combined follow and auto-click loop
-    isAutoFollowActive = true
-    task.spawn(function()
-        local VirtualInputManager = game:GetService("VirtualInputManager")
-        while isAutoFollowActive do
-            for _, football in ipairs(footballs) do
-                if football and football.Parent then
-                    football.CFrame = CFrame.new(rootPart.Position)
-                end
-            end
-            -- Simulate mouse click
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
-            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
-            task.wait(clickInterval)
-        end
-    end)
-end
-
--- Function to stop the combined behavior
-local function stopAutoFollow()
-    isAutoFollowActive = false
-end
-
--- Auto-clicker for "just" (independent)
 local function autoClickJust()
     local VirtualInputManager = game:GetService("VirtualInputManager")
     while autoClickingJust do
@@ -399,8 +355,7 @@ local function autoClickJust()
     end
 end
 
--- Key press function for behaviors
-
+-- Key press function for auto clicker
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "auto clicker",
     Mode = "Toggle",
@@ -415,18 +370,8 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
-Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "spam ball",
-    Mode = "Toggle",
-    Default = "One",
-    Callback = function()
-        if isAutoFollowActive then
-            stopAutoFollow()
-        else
-            teleportAndAutoFollow()
-        end
-    end,
-})
+
+
 
 
 -- Handle adding new footballs to the Junk folder
@@ -1073,8 +1018,6 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local SelectedPlayer = nil
 local PlayerDropdown = nil
-local LoopEnabled = false
-local NormalMode = true -- Add a state for normal mode
 
 -- Function to update player list
 local function UpdatePlayerList()
@@ -1122,36 +1065,125 @@ local function TeleportFootballToPlayer()
     end
 end
 
--- Toggle mode (Normal / Loop) using a Toggle button
-local Toggle = Tabs.all:AddToggle("modetog", {
-    Title = "Normal/Loop",
-    Default = false, -- Default is Loop mode
-})
-
--- When toggle state changes
-Toggle:OnChanged(function(state)
-    NormalMode = not state -- If toggle is on (Loop mode), switch to Loop mode; else Normal mode
-end)
-
--- Keybind for teleporting ball in Normal Mode or toggling the loop in Loop Mode
+-- Keybind for teleporting ball once
 Tabs.all:AddKeybind("Keybind", {
-    Title = "TP Ball Mode",
+    Title = "TP Ball",
     Mode = "Toggle",
     Default = "Four", 
     Callback = function()
-        if NormalMode then
-            -- Normal Mode: Teleport ball to selected player once
-            TeleportFootballToPlayer()
+        TeleportFootballToPlayer()
+    end,
+})
+
+-- Update the player list when players join or leave
+Players.PlayerAdded:Connect(UpdatePlayerList)
+Players.PlayerRemoving:Connect(UpdatePlayerList)
+
+    Tabs.all:AddParagraph({
+        Title = "spam ball",
+        Content = "good for xp"
+    })
+-- Player-related functionalities
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local SelectedPlayer = nil
+local PlayerDropdown = nil
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local autoClicking = false
+local teleporting = false
+local clickInterval = 0  -- Reduced click interval for faster clicks
+local toggleState = true -- This will toggle between LocalPlayer and SelectedPlayer
+
+-- Function to update player list
+local function UpdatePlayerList()
+    local PlayerList = {}
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(PlayerList, player.Name)
+        end
+    end
+    table.insert(PlayerList, "none") -- To reset player selection
+    if PlayerDropdown then
+        PlayerDropdown:SetValues(PlayerList)
+    end
+    
+    -- If selected player leaves, reset to "none"
+    if SelectedPlayer and not Players:FindFirstChild(SelectedPlayer.Name) then
+        SelectedPlayer = nil
+        PlayerDropdown:SetValue("none")
+    end
+    
+    return PlayerList
+end
+
+-- Create dropdown for selecting player
+PlayerDropdown = Tabs.all:AddDropdown("Dropdown", {
+    Title = "Select Player",
+    Values = UpdatePlayerList(),
+    Multi = false,
+    Default = "none",
+    Callback = function(value)
+        if value and value ~= "none" then
+            SelectedPlayer = Players:FindFirstChild(value)
         else
-            -- Loop Mode: Toggle the loop on and off
-            LoopEnabled = not LoopEnabled
-            if LoopEnabled then
-                -- Start the loop if it was toggled on
-                while LoopEnabled do
-                    TeleportFootballToPlayer()
-                    wait() -- Check the loop state more frequently
-                end
+            SelectedPlayer = nil
+        end
+    end
+})
+
+-- Function to teleport football to LocalPlayer or SelectedPlayer based on toggleState
+local function TeleportFootballToPlayers()
+    while teleporting do
+        local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
+        
+        -- Teleport to LocalPlayer if toggleState is true
+        if football and LocalPlayer and LocalPlayer.Character and toggleState then
+            local humanoidRootPart = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                football.CFrame = humanoidRootPart.CFrame
             end
+        end
+        
+        -- Teleport to SelectedPlayer if toggleState is false
+        if football and SelectedPlayer and SelectedPlayer.Character and not toggleState then
+            local humanoidRootPart = SelectedPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if humanoidRootPart then
+                football.CFrame = humanoidRootPart.CFrame
+            end
+        end
+
+        -- Toggle the state to alternate between players quickly
+        toggleState = not toggleState
+        task.wait()
+    end
+end
+
+-- Auto clicker function
+local function AutoClicker()
+    while autoClicking do
+        task.wait(clickInterval)
+        if LocalPlayer then
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0) -- Left click down
+            VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0) -- Left click up
+        end
+    end
+end
+
+-- Keybind for teleporting ball to LocalPlayer and SelectedPlayer (alternating) and auto clicker
+Tabs.all:AddKeybind("Keybind", {
+    Title = "spam ball",
+    Mode = "Toggle",
+    Default = "One",  
+    Callback = function()
+        autoClicking = not autoClicking
+        teleporting = not teleporting
+        
+        if autoClicking then
+            task.spawn(AutoClicker)
+        end
+        
+        if teleporting then
+            task.spawn(TeleportFootballToPlayers)
         end
     end,
 })
@@ -1159,6 +1191,7 @@ Tabs.all:AddKeybind("Keybind", {
 -- Update the player list when players join or leave
 Players.PlayerAdded:Connect(UpdatePlayerList)
 Players.PlayerRemoving:Connect(UpdatePlayerList)
+
 
 
 
