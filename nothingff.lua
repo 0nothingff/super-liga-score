@@ -563,7 +563,7 @@ end
 
 -- Dodanie keybindu z toggle mode
 Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "stuck ball",
+    Title = "hide ball",
     Mode = "Toggle",
     Default = "H",  -- Domyślny klawisz H
     Callback = function()
