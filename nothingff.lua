@@ -471,7 +471,7 @@ local function boostSpeed(character)
         if humanoidRootPart then
             local bodyVelocity = Instance.new("BodyVelocity")
             bodyVelocity.MaxForce = Vector3.new(1000000, 1000000, 1000000)  -- Max force
-            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 400  -- Boost force
+            bodyVelocity.Velocity = humanoidRootPart.CFrame.LookVector * 411  -- Boost force
             bodyVelocity.Parent = humanoidRootPart
 
             -- Remove BodyVelocity after 0.05 seconds
@@ -479,7 +479,7 @@ local function boostSpeed(character)
             bodyVelocity:Destroy()
         end
 
-        wait (0.75)
+        wait (0.78)
         boostActive = false
     end
 end
