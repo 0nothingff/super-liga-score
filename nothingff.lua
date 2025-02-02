@@ -1,4 +1,3 @@
--- Pobieramy gracza
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
@@ -7,7 +6,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "X"
 screenGui.Parent = playerGui
 
--- Tworzymy TextLabel
+-- Tworzymy TextLabel dla "nothing..."
 local textLabel = Instance.new("TextLabel")
 textLabel.Text = "nothing..."
 textLabel.Font = Enum.Font.GothamBold
@@ -15,9 +14,22 @@ textLabel.TextSize = 100
 textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 textLabel.Size = UDim2.new(2, 0, 2, 0)
-textLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+textLabel.Position = UDim2.new(0.5, 0, 0.5, 0) -- Centered
 textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 textLabel.Parent = screenGui
+
+-- Tworzymy TextLabel dla "jest pod nothing..."
+local textLabel3 = Instance.new("TextLabel")
+textLabel3.Text = "discord-nothingff-roblox-101testing0101"
+textLabel3.Font = Enum.Font.GothamBold
+textLabel3.TextSize = 60
+textLabel3.TextColor3 = Color3.fromRGB(255, 255, 255)
+textLabel3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+textLabel3.BackgroundTransparency = 1 -- Ustawiamy przezroczyste tło
+textLabel3.Size = UDim2.new(2, 0, 2, 0)
+textLabel3.Position = UDim2.new(0.5, 0, 0.8, 0) -- Positioned below the "nothing..." label
+textLabel3.AnchorPoint = Vector2.new(0.5, 0.5)
+textLabel3.Parent = screenGui
 
 -- Dodajemy animację fade-out
 local TweenService = game:GetService("TweenService")
@@ -25,15 +37,21 @@ local tweenInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection
 
 local goal = {TextTransparency = 1, BackgroundTransparency = 1}
 
-local tween = TweenService:Create(textLabel, tweenInfo, goal)
+local tween1 = TweenService:Create(textLabel, tweenInfo, goal)
+local tween3 = TweenService:Create(textLabel3, tweenInfo, goal)
 
 -- Uruchamiamy animację
-tween:Play()
+tween1:Play()
+tween3:Play()
 
--- Po zakończeniu animacji, usuwamy obiekt
-tween.Completed:Connect(function()
+-- Po zakończeniu animacji, usuwamy obiekty
+tween1.Completed:Connect(function()
     screenGui:Destroy()
 end)
+tween3.Completed:Connect(function()
+    screenGui:Destroy()
+end)
+
 
 
 local player = game.Players.LocalPlayer
