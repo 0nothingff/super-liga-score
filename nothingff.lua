@@ -127,7 +127,7 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 local Window = Fluent:CreateWindow({
     Title = "Super League Soccer!",
-    SubTitle = "discord-nothingff   roblox-101testing0101",
+    SubTitle = "",
     TabWidth = 150,
     Size = UDim2.fromOffset(488, 318),
     Acrylic = false,
