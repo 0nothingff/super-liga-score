@@ -20,7 +20,7 @@ textLabel.Parent = screenGui
 
 -- Tworzymy TextLabel dla "jest pod nothing..."
 local textLabel3 = Instance.new("TextLabel")
-textLabel3.Text = "discord-nothingff-roblox-101testing0101"
+textLabel3.Text = "discord-nothingff| |roblox-WyvernLordOfNothingX"
 textLabel3.Font = Enum.Font.GothamBold
 textLabel3.TextSize = 60
 textLabel3.TextColor3 = Color3.fromRGB(255, 255, 255)
