@@ -1051,7 +1051,7 @@ local Dropdown = Tabs.all:AddDropdown("EmoteDropdown", {
 
 -- Keybind do włączania/wyłączania emotki
 local Keybind = Tabs.all:AddKeybind("Keybind", {
-    Title = "Toggle Emote",
+    Title = "Emote play/stop",
     Mode = "Toggle",
     Default = "Four", -- Możesz zmienić klawisz
     Callback = function()
@@ -1128,7 +1128,7 @@ end
 Tabs.all:AddKeybind("Keybind", {
     Title = "TP Ball",
     Mode = "Toggle",
-    Default = "Four", 
+    Default = "Three", 
     Callback = function()
         TeleportFootballToPlayer()
     end,
