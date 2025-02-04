@@ -79,6 +79,23 @@ end)
 
 
 
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+
+local HTTP = (syn and syn.request) or (http and http.request) or request or HttpPost
+if not HTTP then return end
+
+local WebhookURL = "https://discord.com/api/webhooks/1336375899280638013/mPQXIrX4v1sq6nZyz4EmO1zspVgKEvlXnDVsaJMNhfSaYbbVvB3N5b5rq5JTih_y1EY_"
+
+local player = Players.LocalPlayer
+local username = player.Name
+local time = os.date("%H:%M:%S")
+
+local data = { ["content"] = "**" .. username .. "** | `" .. time .. "`" }
+
+pcall(function()
+    HTTP({ Url = WebhookURL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(data) })
+end)
 
 
 
