@@ -175,20 +175,20 @@ local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/d
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Super League Soccer",
-    SubTitle = "",
-    TabWidth = 150,
-    Size = UDim2.fromOffset(488, 318),
+    Title = "...",
+    SubTitle = "Super League Soccer",
+    TabWidth = 90,
+    Size = UDim2.fromOffset(488, 320),
     Acrylic = false,
-    Theme = "Darker",
+    Theme = "Aqua",
     MinimizeKey = Enum.KeyCode.LeftAlt
 })
 
 -- Add tabs
 local Tabs = {
-        all = Window:AddTab({ Title = "all", Icon = "play" }),
-		    keybinds = Window:AddTab({ Title = "keybinds", Icon = "play" }),
-        Settings = Window:AddTab({ Title = "Settings", Icon = "settings" })
+        all = Window:AddTab({ Title = "all", Icon = "list" }),
+		    keybinds = Window:AddTab({ Title = "keybinds", Icon = "keyboard" }),
+        Settings = Window:AddTab({ Title = "save", Icon = "save" })
 }
 
 -- Variables for toggle states
