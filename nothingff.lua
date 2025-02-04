@@ -1,56 +1,87 @@
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
+local function startUI(callback) -- Funkcja na początkowy ekran
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Tworzymy ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "X"
-screenGui.Parent = playerGui
+    -- Frame na cały ekran
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(2, 0, 2, 0) -- Pełny ekran
+    frame.Position = UDim2.new(-0.5, 0, -0.5, 0) -- Wyśrodkowanie
+    frame.BackgroundTransparency = 0
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
 
--- Tworzymy TextLabel dla "nothing..."
-local textLabel = Instance.new("TextLabel")
-textLabel.Text = "nothing..."
-textLabel.Font = Enum.Font.GothamBold
-textLabel.TextSize = 100
-textLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-textLabel.Size = UDim2.new(2, 0, 2, 0)
-textLabel.Position = UDim2.new(0.5, 0, 0.5, 0) -- Centered
-textLabel.AnchorPoint = Vector2.new(0.5, 0.5)
-textLabel.Parent = screenGui
+    -- Początkowy gradient (Czarny - Zielony)
+    local gradient = Instance.new("UIGradient")
+    gradient.Rotation = 90
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)), -- Czarny po lewej
+        ColorSequenceKeypoint.new(1, Color3.new(0, 1, 0))  -- Zielony po prawej
+    })
+    gradient.Parent = frame
 
--- Tworzymy TextLabel dla "jest pod nothing..."
-local textLabel3 = Instance.new("TextLabel")
-textLabel3.Text = "|discord-nothingff|"
-textLabel3.Font = Enum.Font.GothamBold
-textLabel3.TextSize = 60
-textLabel3.TextColor3 = Color3.fromRGB(255, 255, 255)
-textLabel3.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-textLabel3.BackgroundTransparency = 1 -- Ustawiamy przezroczyste tło
-textLabel3.Size = UDim2.new(2, 0, 2, 0)
-textLabel3.Position = UDim2.new(0.5, 0, 0.8, 0) -- Positioned below the "nothing..." label
-textLabel3.AnchorPoint = Vector2.new(0.5, 0.5)
-textLabel3.Parent = screenGui
+    task.wait(0.3)
 
--- Dodajemy animację fade-out
-local TweenService = game:GetService("TweenService")
-local tweenInfo = TweenInfo.new(6, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+    local tweenService = game:GetService("TweenService")
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-local goal = {TextTransparency = 1, BackgroundTransparency = 1}
+    -- Fade Out animacja
+    local fadeOutGoal = {BackgroundTransparency = 1}
+    local fadeTween = tweenService:Create(frame, tweenInfo, fadeOutGoal)
+    fadeTween:Play()
 
-local tween1 = TweenService:Create(textLabel, tweenInfo, goal)
-local tween3 = TweenService:Create(textLabel3, tweenInfo, goal)
+    fadeTween.Completed:Connect(function()
+        screenGui:Destroy()
+        if callback then
+            callback() -- Wywołanie callbacku po zakończeniu animacji
+        end
+    end)
+end
 
--- Uruchamiamy animację
-tween1:Play()
-tween3:Play()
+local function endUI() -- Funkcja na końcowy ekran
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Po zakończeniu animacji, usuwamy obiekty
-tween1.Completed:Connect(function()
-    screenGui:Destroy()
+    -- Frame na cały ekran
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(2, 0, 2, 0) -- Pełny ekran
+    frame.Position = UDim2.new(-0.5, 0, -0.5, 0) -- Wyśrodkowanie
+    frame.BackgroundTransparency = 0
+    frame.BorderSizePixel = 0
+    frame.Parent = screenGui
+
+    -- Końcowy gradient (Czarny - Czerwony)
+    local gradient = Instance.new("UIGradient")
+    gradient.Rotation = 90
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.new(0, 0, 0)), -- Czarny po lewej
+        ColorSequenceKeypoint.new(1, Color3.new(1, 0, 0))  -- Czerwony po prawej
+    })
+    gradient.Parent = frame
+
+    task.wait(0.3)
+
+    local tweenService = game:GetService("TweenService")
+    local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+    -- Fade Out animacja
+    local fadeOutGoal = {BackgroundTransparency = 1}
+    local fadeTween = tweenService:Create(frame, tweenInfo, fadeOutGoal)
+    fadeTween:Play()
+
+    fadeTween.Completed:Connect(function()
+        screenGui:Destroy()
+    end)
+end
+
+-- Wywołanie UI: najpierw pokazujemy start, potem end
+startUI(function()
 end)
-tween3.Completed:Connect(function()
-    screenGui:Destroy()
-end)
+
+
+
+
+
+
 
 
 
@@ -114,20 +145,19 @@ end
 
 -- Monitorowanie elementów do usunięcia
 local function monitorGUI()
-    while true do
+    local anyDeleted
+    repeat
         -- Spróbuj usunąć podstawowe elementy
         deleteElements(gameGui, {"Transition", "KeyHints"})
 
         -- Usuń PartyLeader, jeśli istnieje
-        local deleted = deletePartyLeaders()
+        anyDeleted = deletePartyLeaders()
 
-        -- Jeśli coś zostało usunięte, kontynuuj pętlę
-        if deleted then
-            task.wait(0.1) -- Odroczona ponowna próba usunięcia
-        else
-            break -- Przerwij, jeśli nie ma nic do usunięcia
+        -- Odroczona próba usunięcia, tylko jeśli coś zostało usunięte
+        if anyDeleted then
+            task.wait(0.1)
         end
-    end
+    until not anyDeleted -- Zakończ pętlę, gdy nic już nie zostanie usunięte
 end
 
 -- Uruchom proces monitorowania
@@ -137,14 +167,15 @@ monitorGUI()
 
 
 
-wait ("2")
+
+
 --gui
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
 local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
 
 local Window = Fluent:CreateWindow({
-    Title = "Super League Soccer!",
+    Title = "Super League Soccer",
     SubTitle = "",
     TabWidth = 150,
     Size = UDim2.fromOffset(488, 318),
@@ -1398,3 +1429,6 @@ SaveManager:IgnoreThemeSettings()
 SaveManager:SetFolder("nothing/nothing")
 SaveManager:BuildConfigSection(Tabs.Settings)
 SaveManager:LoadAutoloadConfig()
+
+endUI(function()
+end)
