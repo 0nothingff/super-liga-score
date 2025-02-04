@@ -1,3 +1,66 @@
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Usuwanie ekranu ładowania
+local loadingScreen = playerGui:FindFirstChild("LoadingScreen")
+if loadingScreen then
+    loadingScreen:Destroy()
+end
+
+-- Referencje do GameGui
+local gameGui = playerGui:FindFirstChild("GameGui")
+if not gameGui then
+    while true do
+        warn("-")
+        task.wait(0.5) -- Krótkie opóźnienie, aby uniknąć przeciążenia konsoli
+    end
+end
+
+-- Funkcja do znajdowania dziecka w strukturze
+local function findChildRecursive(parent, names)
+    local current = parent
+    for _, name in ipairs(names) do
+        current = current and current:FindFirstChild(name)
+        if not current then break end
+    end
+    return current
+end
+
+-- Funkcja do usuwania elementów z listy nazw
+local function deleteElements(parent, names)
+    for _, name in ipairs(names) do
+        local element = parent:FindFirstChild(name)
+        if element then
+            element:Destroy()
+        end
+    end
+end
+
+-- Funkcja do usuwania PartyLeader
+local function deletePartyLeaders()
+    local party = gameGui:FindFirstChild("Party")
+    if party then
+        local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
+        if members then
+            for _, button in ipairs(members:GetChildren()) do
+                if button.Name == "CircleButton" and button:FindFirstChild("Background") then
+                    local partyLeader = button.Background:FindFirstChild("PartyLeader")
+                    if partyLeader then
+                        partyLeader:Destroy()
+                    end
+                end
+            end
+        end
+    end
+end
+
+-- Usunięcie elementów GUI
+deleteElements(gameGui, {"Transition", "KeyHints"})
+deletePartyLeaders()
+
+
+
+
 local function startUI(callback) -- Funkcja na początkowy ekran
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -108,68 +171,6 @@ end)
 
 
 
-
-
-
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- Usuwanie ekranu ładowania
-local loadingScreen = playerGui:FindFirstChild("LoadingScreen")
-if loadingScreen then
-    loadingScreen:Destroy()
-end
-
--- Referencje do GameGui
-local gameGui = playerGui:FindFirstChild("GameGui")
-if not gameGui then
-    while true do
-        warn("-")
-        task.wait(0.5) -- Krótkie opóźnienie, aby uniknąć przeciążenia konsoli
-    end
-end
-
--- Funkcja do znajdowania dziecka w strukturze
-local function findChildRecursive(parent, names)
-    local current = parent
-    for _, name in ipairs(names) do
-        current = current and current:FindFirstChild(name)
-        if not current then break end
-    end
-    return current
-end
-
--- Funkcja do usuwania elementów z listy nazw
-local function deleteElements(parent, names)
-    for _, name in ipairs(names) do
-        local element = parent:FindFirstChild(name)
-        if element then
-            element:Destroy()
-        end
-    end
-end
-
--- Funkcja do usuwania PartyLeader
-local function deletePartyLeaders()
-    local party = gameGui:FindFirstChild("Party")
-    if party then
-        local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
-        if members then
-            for _, button in ipairs(members:GetChildren()) do
-                if button.Name == "CircleButton" and button:FindFirstChild("Background") then
-                    local partyLeader = button.Background:FindFirstChild("PartyLeader")
-                    if partyLeader then
-                        partyLeader:Destroy()
-                    end
-                end
-            end
-        end
-    end
-end
-
--- Usunięcie elementów GUI
-deleteElements(gameGui, {"Transition", "KeyHints"})
-deletePartyLeaders()
 
 
 
