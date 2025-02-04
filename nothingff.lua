@@ -611,17 +611,17 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 local player = game.Players.LocalPlayer
 local userInputService = game:GetService("UserInputService")
-local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")  -- Sprawdza, czy Football istnieje
+local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
 
--- Funkcja do znalezienia najbliższego gracza w tej samej drużynie
+-- Function to find the nearest teammate (excluding the local player)
 local function getNearestPlayer()
-    if not football then return nil end  -- Jeśli nie ma piłki, nie szukaj gracza
+    if not football then return nil end
 
     local closestPlayer = nil
-    local shortestDistance = math.huge  -- Start z dużą liczbą
+    local shortestDistance = math.huge
 
     for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-        if otherPlayer.Team == player.Team and otherPlayer.Character and otherPlayer.Character.PrimaryPart then
+        if otherPlayer ~= player and otherPlayer.Team == player.Team and otherPlayer.Character and otherPlayer.Character.PrimaryPart then
             local distance = (otherPlayer.Character.PrimaryPart.Position - football.Position).magnitude
             if distance < shortestDistance then
                 closestPlayer = otherPlayer
@@ -633,9 +633,9 @@ local function getNearestPlayer()
     return closestPlayer
 end
 
--- Funkcja do teleportowania piłki do najbliższego gracza
+-- Function to teleport the football to the nearest teammate (excluding the local player)
 local function teleportFootballToNearestPlayer()
-    if not football then return end  -- Jeśli piłka nie istnieje, nic nie rób
+    if not football then return end
 
     local nearestPlayer = getNearestPlayer()
     if nearestPlayer then
@@ -643,15 +643,16 @@ local function teleportFootballToNearestPlayer()
     end
 end
 
--- Dodanie keybindu do teleportacji piłki
+-- Keybind setup
 Tabs.keybinds:AddKeybind("Keybind", {
-    Title = "tp close player your team", 
+    Title = "tp close player your team",
     Mode = "Toggle",
-    Default = "T",  -- Domyślny klawisz T
+    Default = "T",
     Callback = function()
         teleportFootballToNearestPlayer()
     end,
 })
+
 
 
 
