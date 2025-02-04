@@ -43,10 +43,13 @@ local function deletePartyLeaders()
         local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
         if members then
             for _, button in ipairs(members:GetChildren()) do
-                if button.Name == "CircleButton" and button:FindFirstChild("Background") then
-                    local partyLeader = button.Background:FindFirstChild("PartyLeader")
-                    if partyLeader then
-                        partyLeader:Destroy()
+                if button.Name == "CircleButton" then
+                    local background = button:FindFirstChild("Background")
+                    if background then
+                        local partyLeader = background:FindFirstChild("PartyLeader")
+                        if partyLeader then
+                            partyLeader:Destroy() -- Usuwanie PartyLeader
+                        end
                     end
                 end
             end
@@ -57,6 +60,7 @@ end
 -- Usunięcie elementów GUI
 deleteElements(gameGui, {"Transition", "KeyHints"})
 deletePartyLeaders()
+
 
 
 
