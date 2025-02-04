@@ -545,14 +545,15 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
--- Obiekt Football w folderze Junk w workspace
-local football = workspace.Junk.Football
+local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
 local tpPosition = Vector3.new(-0.000156402588, -0.817444026, 0.000289689749)  -- Współrzędne teleportacji
-local tpTime = 10  -- Czas trwania teleportacji (5 sekund)
+local tpTime = 3  -- Czas trwania teleportacji (10 sekund)
 local isTeleporting = false  -- Zmienna sprawdzająca stan teleportacji
 
 -- Funkcja teleportacji
 local function teleportFootball()
+    if not football then return end  -- Jeśli Football nie istnieje, przerwij funkcję
+
     if not isTeleporting then
         isTeleporting = true
         
@@ -561,7 +562,7 @@ local function teleportFootball()
         football.AssemblyAngularVelocity = Vector3.new(0, 0, 0)  -- Zatrzymanie prędkości kątowej
         
         football.CFrame = CFrame.new(tpPosition)  -- Teleportowanie Football na nowe współrzędne
-        wait(tpTime)  -- Czekaj 5 sekund
+        wait(tpTime)  -- Czekaj 10 sekund
         isTeleporting = false  -- Wyłącz teleportację
     end
 end
@@ -579,15 +580,16 @@ Tabs.keybinds:AddKeybind("Keybind", {
 
 local player = game.Players.LocalPlayer
 local userInputService = game:GetService("UserInputService")
-local football = workspace.Junk.Football
+local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")  -- Sprawdza, czy Football istnieje
 
--- Function to find the nearest player on the same team (including the local player)
+-- Funkcja do znalezienia najbliższego gracza w tej samej drużynie
 local function getNearestPlayer()
+    if not football then return nil end  -- Jeśli nie ma piłki, nie szukaj gracza
+
     local closestPlayer = nil
-    local shortestDistance = math.huge  -- Start with a very large number (no limit)
+    local shortestDistance = math.huge  -- Start z dużą liczbą
 
     for _, otherPlayer in pairs(game.Players:GetPlayers()) do
-        -- Check if the player is on the same team and has a character
         if otherPlayer.Team == player.Team and otherPlayer.Character and otherPlayer.Character.PrimaryPart then
             local distance = (otherPlayer.Character.PrimaryPart.Position - football.Position).magnitude
             if distance < shortestDistance then
@@ -600,19 +602,21 @@ local function getNearestPlayer()
     return closestPlayer
 end
 
--- Function to teleport the football to the nearest player (including the local player)
+-- Funkcja do teleportowania piłki do najbliższego gracza
 local function teleportFootballToNearestPlayer()
+    if not football then return end  -- Jeśli piłka nie istnieje, nic nie rób
+
     local nearestPlayer = getNearestPlayer()
     if nearestPlayer then
         football.CFrame = nearestPlayer.Character.PrimaryPart.CFrame
     end
 end
 
--- Adding the keybind for the teleportation action
+-- Dodanie keybindu do teleportacji piłki
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "tp close player your team", 
     Mode = "Toggle",
-    Default = "T",  -- Default key for the keybind
+    Default = "T",  -- Domyślny klawisz T
     Callback = function()
         teleportFootballToNearestPlayer()
     end,
@@ -1394,4 +1398,3 @@ SaveManager:IgnoreThemeSettings()
 SaveManager:SetFolder("nothing/nothing")
 SaveManager:BuildConfigSection(Tabs.Settings)
 SaveManager:LoadAutoloadConfig()
-
