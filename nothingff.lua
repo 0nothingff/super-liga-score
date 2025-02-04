@@ -103,7 +103,7 @@ if not gameGui then
     end
 end
 
--- Funkcja do rekurencyjnego znajdowania dzieci
+-- Funkcja do znajdowania dziecka w strukturze
 local function findChildRecursive(parent, names)
     local current = parent
     for _, name in ipairs(names) do
@@ -134,34 +134,16 @@ local function deletePartyLeaders()
                     local partyLeader = button.Background:FindFirstChild("PartyLeader")
                     if partyLeader then
                         partyLeader:Destroy()
-                        return true -- Zwraca true, jeśli element został usunięty
                     end
                 end
             end
         end
     end
-    return false -- Zwraca false, jeśli nie było co usuwać
 end
 
--- Monitorowanie elementów do usunięcia
-local function monitorGUI()
-    local anyDeleted
-    repeat
-        -- Spróbuj usunąć podstawowe elementy
-        deleteElements(gameGui, {"Transition", "KeyHints"})
-
-        -- Usuń PartyLeader, jeśli istnieje
-        anyDeleted = deletePartyLeaders()
-
-        -- Odroczona próba usunięcia, tylko jeśli coś zostało usunięte
-        if anyDeleted then
-            task.wait(0.1)
-        end
-    until not anyDeleted -- Zakończ pętlę, gdy nic już nie zostanie usunięte
-end
-
--- Uruchom proces monitorowania
-monitorGUI()
+-- Usunięcie elementów GUI
+deleteElements(gameGui, {"Transition", "KeyHints"})
+deletePartyLeaders()
 
 
 
@@ -1430,6 +1412,6 @@ SaveManager:IgnoreThemeSettings()
 SaveManager:SetFolder("nothing/nothing")
 SaveManager:BuildConfigSection(Tabs.Settings)
 SaveManager:LoadAutoloadConfig()
-
+deletePartyLeaders()
 endUI(function()
 end)
