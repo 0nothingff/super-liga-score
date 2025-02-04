@@ -205,6 +205,30 @@ local Tabs = {
         Settings = Window:AddTab({ Title = "save", Icon = "save" })
 }
 
+-- Wczytaj Fluent GUI oraz dodatki
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+-- Tworzymy okno Fluent
+local Window = Fluent:CreateWindow({
+    Title = "",
+    SubTitle = "Super League Soccer",
+    TabWidth = 90,
+    Size = UDim2.fromOffset(488, 320),
+    Acrylic = false,
+    Theme = "Aqua",
+    MinimizeKey = Enum.KeyCode.LeftAlt
+})
+
+-- Dodajemy zakładki
+local Tabs = {
+    all = Window:AddTab({ Title = "all", Icon = "list" }),
+    keybinds = Window:AddTab({ Title = "keybinds", Icon = "keyboard" }),
+    Settings = Window:AddTab({ Title = "save", Icon = "save" })
+}
+
+-- Sprawdzamy, czy urządzenie to mobile
 local UserInputService = game:GetService("UserInputService")
 local isMobile = UserInputService.TouchEnabled
 
@@ -224,10 +248,8 @@ if isMobile then
         wait(1)  -- Czekaj 1 sekundę
         showNotification("Mobile", "Wrong device: please switch to PC.")  -- Pokaż powiadomienie o błędnym urządzeniu
     end
-else
-    -- Jeśli to PC, pokaż jednorazowe powiadomienie
-    showNotification("PC", "You are on a PC device.")
 end
+
 -- Variables for toggle states
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
