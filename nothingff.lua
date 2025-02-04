@@ -205,6 +205,29 @@ local Tabs = {
         Settings = Window:AddTab({ Title = "save", Icon = "save" })
 }
 
+local UserInputService = game:GetService("UserInputService")
+local isMobile = UserInputService.TouchEnabled
+
+-- Funkcja do wyświetlania powiadomienia
+local function showNotification(deviceType, message)
+    Fluent:Notify({
+        Title = "Device Info",
+        Content = message,
+        SubContent = "Device: " .. deviceType,
+        Duration = 5
+    })
+end
+
+-- Jeśli urządzenie to mobile, pokaż powiadomienie co sekundę
+if isMobile then
+    while true do
+        wait(1)  -- Czekaj 1 sekundę
+        showNotification("Mobile", "Wrong device: please switch to PC.")  -- Pokaż powiadomienie o błędnym urządzeniu
+    end
+else
+    -- Jeśli to PC, pokaż jednorazowe powiadomienie
+    showNotification("PC", "You are on a PC device.")
+end
 -- Variables for toggle states
 local isTeleportingEnabled = false
 local isAutoClickerActive = false
