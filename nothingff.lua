@@ -611,45 +611,50 @@ Tabs.keybinds:AddKeybind("Keybind", {
     end,
 })
 
-local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
 local tpPosition = Vector3.new(-0.000156402588, -0.817444026, 0.000289689749)  -- Współrzędne teleportacji
-local tpTime = 3  -- Czas trwania teleportacji (10 sekund)
+local tpTime = 3  -- Czas trwania teleportacji (3 sekundy)
 local isTeleporting = false  -- Zmienna sprawdzająca stan teleportacji
 
--- Funkcja teleportacji
+local player = game.Players.LocalPlayer
+local userInputService = game:GetService("UserInputService")
+
+-- Funkcja do pobierania piłki dynamicznie
+local function getFootball()
+    return workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
+end
+
+-- Funkcja teleportacji piłki
 local function teleportFootball()
+    local football = getFootball()
     if not football then return end  -- Jeśli Football nie istnieje, przerwij funkcję
 
     if not isTeleporting then
         isTeleporting = true
-        
-        -- Ustawienie prędkości i prędkości kątowej na zero, aby zatrzymać piłkę
-        football.AssemblyLinearVelocity = Vector3.new(0, 0, 0)  -- Zatrzymanie prędkości
-        football.AssemblyAngularVelocity = Vector3.new(0, 0, 0)  -- Zatrzymanie prędkości kątowej
-        
-        football.CFrame = CFrame.new(tpPosition)  -- Teleportowanie Football na nowe współrzędne
-        wait(tpTime)  -- Czekaj 10 sekund
-        isTeleporting = false  -- Wyłącz teleportację
+
+        -- Zatrzymaj piłkę
+        football.AssemblyLinearVelocity = Vector3.new(0, 0, 0)
+        football.AssemblyAngularVelocity = Vector3.new(0, 0, 0)
+
+        -- Teleportacja piłki
+        football.CFrame = CFrame.new(tpPosition)
+        wait(tpTime)
+        isTeleporting = false
     end
 end
 
--- Dodanie keybindu z toggle mode
+-- Keybind do teleportacji piłki
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "hide ball",
     Mode = "Toggle",
-    Default = "H",  -- Domyślny klawisz H
+    Default = "H",
     Callback = function()
-        teleportFootball()  -- Wywołanie teleportacji po naciśnięciu klawisza
+        teleportFootball()
     end,
 })
 
-
-local player = game.Players.LocalPlayer
-local userInputService = game:GetService("UserInputService")
-local football = workspace:FindFirstChild("Junk") and workspace.Junk:FindFirstChild("Football")
-
--- Function to find the nearest teammate (excluding the local player)
+-- Funkcja do znalezienia najbliższego gracza w drużynie
 local function getNearestPlayer()
+    local football = getFootball()
     if not football then return nil end
 
     local closestPlayer = nil
@@ -668,8 +673,9 @@ local function getNearestPlayer()
     return closestPlayer
 end
 
--- Function to teleport the football to the nearest teammate (excluding the local player)
+-- Funkcja teleportacji piłki do najbliższego gracza w drużynie
 local function teleportFootballToNearestPlayer()
+    local football = getFootball()
     if not football then return end
 
     local nearestPlayer = getNearestPlayer()
@@ -678,7 +684,7 @@ local function teleportFootballToNearestPlayer()
     end
 end
 
--- Keybind setup
+-- Keybind do teleportacji do najbliższego gracza w drużynie
 Tabs.keybinds:AddKeybind("Keybind", {
     Title = "tp close player your team",
     Mode = "Toggle",
@@ -687,6 +693,12 @@ Tabs.keybinds:AddKeybind("Keybind", {
         teleportFootballToNearestPlayer()
     end,
 })
+
+-- Nasłuchiwanie respawnu gracza i ponowne przypisanie piłki
+player.CharacterAdded:Connect(function()
+    wait(1)  -- Daj chwilę na załadowanie postaci
+    getFootball()  -- Pobranie nowej piłki po respawnie
+end)
 
 
 
