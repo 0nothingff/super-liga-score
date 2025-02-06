@@ -218,17 +218,15 @@ local function showNotification(deviceType, message)
         Title = "Device Info",
         Content = message,
         SubContent = "Device: " .. deviceType,
-        Duration = 20
+        Duration = 500
     })
 end
 
--- Jeśli urządzenie to mobile, pokaż powiadomienie co sekundę
+-- Jeśli urządzenie to mobile, pokaż powiadomienie tylko raz
 if isMobile then
-    while true do
-        wait(0.22)  -- Czekaj 1 sekundę
-        showNotification("Mobile", "Wrong device: please switch to PC")  -- Pokaż powiadomienie o błędnym urządzeniu
-    end
+    showNotification("Mobile", "Wrong device: please switch to PC")
 end
+
 
 -- Variables for toggle states
 local isTeleportingEnabled = false
