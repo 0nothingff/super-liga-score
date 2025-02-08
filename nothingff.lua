@@ -285,7 +285,7 @@ local function toggleTeleport()
                         end
                     end
                 end
-                task.wait(0.3)
+                task.wait(0.1)
             end
         end)
     end
@@ -351,13 +351,8 @@ end
 -- Auto Kick Function
 local function autoKickLoop()
     while isAutoKickEnabled do
-        local ball = character and character:FindFirstChild("Ball")
-        if ball and ball.Transparency == 1 then
             pressEKey()
-            task.wait(0.1)
-        else
-            task.wait(1)
-        end
+        task.wait()
     end
 end
 
