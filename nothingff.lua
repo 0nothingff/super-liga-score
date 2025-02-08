@@ -680,12 +680,117 @@ player.CharacterAdded:Connect(function()
 end)
 
 
+local player = game.Players.LocalPlayer
+local UserInputService = game:GetService("UserInputService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
+local workspace = game:GetService("Workspace")
 
+local isTrackingEnabled = false -- Zmienna do przechowywania stanu
 
+-- Funkcja do naciskania klawisza "E"
+local function pressEKey()
+    VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.E, false, game)
+    task.wait(0.1)
+    VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.E, false, game)
+end
 
+-- Funkcja teleportacji gracza na ustalone koordynaty
+local function teleportPlayer(position)
+    if player.Character and player.Character.PrimaryPart then
+        player.Character:SetPrimaryPartCFrame(CFrame.new(position))
+    end
+end
 
+-- Funkcja do wykrywania resetowania piłki (Football)
+local function detectFootballReset()
+    local junkFolder = workspace:FindFirstChild("Junk")
+    if junkFolder then
+        local football
+        for _, obj in ipairs(junkFolder:GetChildren()) do
+            if obj:IsA("BasePart") and obj.Name == "Football" then
+                football = obj
+                break
+            end
+        end
 
+        if football then
+            -- Przechwytywanie resetu piłki
+            football:GetPropertyChangedSignal("Position"):Connect(function()
+                -- Kiedy piłka jest zresetowana (po zmianie pozycji)
+                -- Możesz dodać logikę teleportacji tutaj, jeśli piłka została zresetowana
+            end)
+        end
+    end
+end
 
+-- Funkcja do wykrywania resetu gracza (np. po śmierci)
+local function detectPlayerReset()
+    player.CharacterAdded:Connect(function(character)
+        -- Kiedy gracz zresetuje swoją postać (np. po śmierci)
+        -- Możesz dodać logikę teleportacji tutaj, jeśli gracz się zresetował
+    end)
+end
+
+-- Główna funkcja teleportacji
+local function teleportToNetworkOwner()
+    task.defer(function()
+        while true do
+            if isTrackingEnabled then -- Sprawdzenie, czy śledzenie jest włączone
+                if player.Team then
+                    local junkFolder = workspace:FindFirstChild("Junk")
+                    if junkFolder then
+                        local football
+                        for _, obj in ipairs(junkFolder:GetChildren()) do
+                            if obj:IsA("BasePart") and obj.Name == "Football" then
+                                football = obj
+                                break
+                            end
+                        end
+
+                        if football and football.Transparency == 1 then
+                            local ownerName = football:GetAttribute("NetworkOwner")
+
+                            -- Sprawdzenie, czy lokalny gracz jest właścicielem piłki
+                            if ownerName == player.Name then
+                                -- Jeśli lokalny gracz jest właścicielem piłki, wyłącz teleportację
+                                isTrackingEnabled = false  -- Wyłącz teleportację
+                                return -- Przerywamy teleportację, bo nie chcemy teleportować gracza
+                            else
+                                -- Jeśli inny gracz jest właścicielem piłki, teleportujemy się do niego
+                                local targetPlayer = ownerName and game.Players:FindFirstChild(ownerName)
+                                if targetPlayer and targetPlayer.Character and targetPlayer.Character.PrimaryPart then
+                                    teleportPlayer(targetPlayer.Character.PrimaryPart.Position)
+                                    pressEKey() -- Symulujemy naciśnięcie "E"
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(0.45)
+        end
+    end)
+end
+
+Tabs.keybinds:AddKeybind("Keybind", {
+    Title = "track ball",
+    Mode = "Toggle",
+    Default = "B",
+    Callback = function()
+        if isTrackingEnabled then
+            -- Jeśli teleportacja jest włączona, wyłącz ją
+            isTrackingEnabled = false
+        else
+            -- Jeśli teleportacja jest wyłączona, włącz ją
+            isTrackingEnabled = true
+            teleportToNetworkOwner()  -- Rozpocznij teleportację natychmiast
+        end
+    end, 
+})
+
+-- Uruchomienie detekcji resetu Footballa i gracza
+detectFootballReset()
+detectPlayerReset()
 
 
 
