@@ -160,7 +160,7 @@ local displayName = player.DisplayName
 local username = player.Name
 
 -- Check if the player is on mobile or PC
-local deviceType = (UserInputService.TouchEnabled and "📱 Mobile") or "🖥️ PC"
+local deviceType = (UserInputService.TouchEnabled and "📱") or "🖥️"
 
 -- Create the message data with device type and user info
 local data = {
