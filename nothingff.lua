@@ -176,8 +176,8 @@ local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.
 
 local Window = Fluent:CreateWindow({
     Title = "",
-    SubTitle = "Super League Soccer",
-    TabWidth = 90,
+    SubTitle = "",
+    TabWidth = 88,
     Size = UDim2.fromOffset(488, 320),
     Acrylic = false,
     Theme = "Aqua",
