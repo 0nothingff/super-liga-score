@@ -745,7 +745,7 @@ local function teleportToNetworkOwner()
                     end
                 end
             end
-            task.wait(0.6)
+            task.wait(0.85)
         end
     end)
 end
