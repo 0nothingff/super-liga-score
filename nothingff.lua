@@ -36,30 +36,8 @@ local function deleteElements(parent, names)
     end
 end
 
--- Funkcja do usuwania PartyLeader
-local function deletePartyLeaders()
-    local party = gameGui:FindFirstChild("Party")
-    if party then
-        local members = findChildRecursive(party, {"TopbarLayout", "PartyLayout", "Members"})
-        if members then
-            for _, button in ipairs(members:GetChildren()) do
-                if button.Name == "CircleButton" then
-                    local background = button:FindFirstChild("Background")
-                    if background then
-                        local partyLeader = background:FindFirstChild("PartyLeader")
-                        if partyLeader then
-                            partyLeader:Destroy() -- Usuwanie PartyLeader
-                        end
-                    end
-                end
-            end
-        end
-    end
-end
-
 -- Usunięcie elementów GUI
 deleteElements(gameGui, {"Transition", "KeyHints"})
-deletePartyLeaders()
 
 
 
@@ -1561,6 +1539,5 @@ SaveManager:IgnoreThemeSettings()
 SaveManager:SetFolder("nothing/nothing")
 SaveManager:BuildConfigSection(Tabs.Settings)
 SaveManager:LoadAutoloadConfig()
-deletePartyLeaders()
 endUI(function()
 end)
