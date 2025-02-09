@@ -1448,12 +1448,10 @@ local matchHUD = gameGui and gameGui:FindFirstChild("MatchHUD")
 local energyBars = matchHUD and matchHUD:FindFirstChild("EnergyBars") -- POPRAWIONA NAZWA!
 
 if not matchHUD then
-    warn("MatchHUD nie został znaleziony!")
     return
 end
 
 if not energyBars then
-    warn("EnergyBars nie został znaleziony!")
     return
 end
 
