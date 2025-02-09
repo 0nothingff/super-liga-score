@@ -1439,16 +1439,21 @@ end)
         Content = "colors of stamina and power"
     })
 
---colors
 -- Referencje do MatchHUD i EnergyBars
 local player = game.Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local gameGui = playerGui:FindFirstChild("GameGui")
 
 local matchHUD = gameGui and gameGui:FindFirstChild("MatchHUD")
-local energyBars = matchHUD and matchHUD:FindFirstChild("EngergyBars")
+local energyBars = matchHUD and matchHUD:FindFirstChild("EnergyBars") -- POPRAWIONA NAZWA!
 
-if not (matchHUD and energyBars) then
+if not matchHUD then
+    warn("MatchHUD nie został znaleziony!")
+    return
+end
+
+if not energyBars then
+    warn("EnergyBars nie został znaleziony!")
     return
 end
 
@@ -1465,8 +1470,6 @@ local function setGradient(frame, startColor, endColor)
             newGradient.Color = ColorSequence.new(startColor, endColor)
             newGradient.Rotation = 90
             newGradient.Parent = progressBar
-        else
-
         end
     end
 end
@@ -1477,14 +1480,20 @@ local powerRightColor = Color3.fromRGB(255, 255, 255)
 local staminaLeftColor = Color3.fromRGB(0, 0, 0)
 local staminaRightColor = Color3.fromRGB(255, 255, 255)
 
+-- Funkcja do aktualizacji kolorów
+local function updateColors()
+    setGradient(energyBars:FindFirstChild("Power"), powerLeftColor, powerRightColor)
+    setGradient(energyBars:FindFirstChild("Stamina"), staminaLeftColor, staminaRightColor)
+end
+
 -- Colorpicker dla Stamina Left
 local staminaLeftPicker = Tabs.all:AddColorpicker("Colorpicker", {
     Title = "Stamina Up",
     Default = staminaLeftColor
 })
-
 staminaLeftPicker:OnChanged(function(color)
     staminaLeftColor = color
+    updateColors()
 end)
 
 -- Colorpicker dla Stamina Right
@@ -1492,9 +1501,9 @@ local staminaRightPicker = Tabs.all:AddColorpicker("Colorpicker", {
     Title = "Stamina Down",
     Default = staminaRightColor
 })
-
 staminaRightPicker:OnChanged(function(color)
     staminaRightColor = color
+    updateColors()
 end)
 
 -- Colorpicker dla Power Left
@@ -1502,9 +1511,9 @@ local powerLeftPicker = Tabs.all:AddColorpicker("Colorpicker", {
     Title = "Power Up",
     Default = powerLeftColor
 })
-
 powerLeftPicker:OnChanged(function(color)
     powerLeftColor = color
+    updateColors()
 end)
 
 -- Colorpicker dla Power Right
@@ -1512,19 +1521,10 @@ local powerRightPicker = Tabs.all:AddColorpicker("Colorpicker", {
     Title = "Power Down",
     Default = powerRightColor
 })
-
 powerRightPicker:OnChanged(function(color)
     powerRightColor = color
+    updateColors()
 end)
-
--- Funkcja do aktualizacji kolorów
-local function updateColors()
-    setGradient(energyBars:FindFirstChild("Power"), powerLeftColor, powerRightColor)
-    setGradient(energyBars:FindFirstChild("Stamina"), staminaLeftColor, staminaRightColor)
-
-    -- Wywołanie ponowne po 2 sekundach
-    task.delay(2, updateColors)
-end
 
 -- Uruchomienie pierwszej aktualizacji
 updateColors()
